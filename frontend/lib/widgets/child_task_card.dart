@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:kidromeda/models/task.dart';
-import 'package:kidromeda/widgets/circular_percentage_indicator.dart';
 import 'package:kidromeda/widgets/mini_flat_button.dart';
 import './custom_dialog.dart';
 
-class TaskInfoCard extends StatelessWidget {
+/// The child sees these.
+class ChildTaskCard extends StatelessWidget {
   final Task task;
 
-  const TaskInfoCard({
+  const ChildTaskCard({
     Key key,
     @required this.task,
   }) : super(key: key);
@@ -45,31 +45,24 @@ class TaskInfoCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  task.status == 0 || task.status == 2
-                      ? SizedBox.shrink()
-                      : buttonWrapper(MiniFlatButton(
+                  task.status == 0
+                      ? buttonWrapper(MiniFlatButton(
                           color: Colors.green.shade100,
                           child: Text("✓ Confirm"),
                           onPressed: () {},
-                        )),
-                  task.status == 2
-                      ? SizedBox.shrink()
+                        ))
                       : buttonWrapper(MiniFlatButton(
-                          color: Colors.red.shade100,
-                          child: Text("X Deny"),
-                          onPressed: () {},
+                          child: Text("🛈 Details"),
+                          onPressed: () => showDialog(
+                              context: context,
+                              builder: (_) => CustomDialogBox(
+                                    img: Image.asset(
+                                        'assets/images/piggy_bank.png'),
+                                    title: 'Task Details',
+                                    text: 'OK',
+                                    descriptions: task.summary,
+                                  )),
                         )),
-                  buttonWrapper(MiniFlatButton(
-                    child: Text("🛈 Details"),
-                    onPressed: () => showDialog(
-                        context: context,
-                        builder: (_) => CustomDialogBox(
-                              img: Image.asset('assets/images/piggy_bank.png'),
-                              title: 'Task Details',
-                              text: 'OK',
-                              descriptions: task.summary,
-                            )),
-                  )),
                 ])
           ],
         ));

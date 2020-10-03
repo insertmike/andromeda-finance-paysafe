@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kidromeda/screens/logged_child_screen.dart';
 import 'package:kidromeda/screens/logged_parent_screen.dart';
 import './default_btn.dart';
 import 'custom_snackbar.dart';
@@ -66,6 +67,11 @@ class _LoginFormState extends State<LoginForm> {
       Navigator.pushReplacementNamed(
         context,
         LoggedParentScreen.routeName,
+      );
+    } else if (_email == "child" && _password == "child") {
+      Navigator.pushReplacementNamed(
+        context,
+        LoggedChildScreen.routeName
       );
     } else {
       Scaffold.of(context).showSnackBar(CustomSnackbar.buildErrorSnackBar(
