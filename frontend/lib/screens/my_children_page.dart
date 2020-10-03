@@ -1,20 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:kidromeda/models/kid.dart';
+import 'package:kidromeda/utils/mockup_data.dart' show getChildren;
 import 'package:kidromeda/widgets/child_info_card.dart';
-import '../models/kid.dart';
-import 'dart:convert';
 import '../utils/string_utils.dart';
 
 class MyChildrenPage extends StatelessWidget {
-  String sampleResponse =
-      '{ "children": [{ "parent_id": 0, "name": "Dexter", "balance": 100.0, "tasks": [{ "summary": "Task 1", "status": 0, "reward": 50.0, "comment": null }] }] }';
   @override
   Widget build(BuildContext context) {
-    List<Kid> children = json
-        .decode(sampleResponse)['children']
-        .map<Kid>((str) => Kid.fromJson(str))
-        .toList();
-    print(children);
-    print(json.decode(sampleResponse));
+    List<Kid> children = getChildren();
+
     return Container(
         child: ListView.builder(
       itemCount: children.length,
@@ -23,13 +17,17 @@ class MyChildrenPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            ChildInfoCard(
-              name: children[position].name,
-              balance: children[position].balance,
-              // TODO FILTER BY COMPLETED TASKS
-              completedTasks: 1,
-              totalTasks: children[position].tasks.length,
-            ),
+            Padding(
+              padding: EdgeInsets.all(8),
+              child: ChildInfoCard(
+                index: position,
+                name: children[position].name,
+                balance: children[position].balance,
+                // TODO FILTER BY COMPLETED TASKS
+                completedTasks: 1,
+                totalTasks: children[position].tasks.length,
+              ),
+            )
           ],
         );
       },

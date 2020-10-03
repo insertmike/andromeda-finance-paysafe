@@ -25,7 +25,7 @@ class AppTheme {
   static final _themeBase = ThemeData(
     primaryColor: primaryColorConfig,
     accentColor: accentColorConfig,
-
+    scaffoldBackgroundColor: Color.fromARGB(255, 0xEE, 0xEE, 0xEE),
     /// Text
     fontFamily: 'OpenSans',
   );

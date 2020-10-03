@@ -9,9 +9,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final String body =
-      ' {children: [{ name, balance, tasks: [{ summary, status, reward, image: string|null, comment: string }]] }';
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

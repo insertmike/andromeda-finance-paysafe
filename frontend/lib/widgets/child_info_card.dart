@@ -3,6 +3,7 @@ import 'package:kidromeda/widgets/circular_percentage_indicator.dart';
 import 'package:kidromeda/widgets/mini_flat_button.dart';
 
 class ChildInfoCard extends StatelessWidget {
+  final int index;
   final String name;
   final double balance;
   final int completedTasks;
@@ -10,6 +11,7 @@ class ChildInfoCard extends StatelessWidget {
 
   const ChildInfoCard(
       {Key key,
+      @required this.index,
       @required this.name,
       @required this.balance,
       @required this.completedTasks,
@@ -64,7 +66,9 @@ class ChildInfoCard extends StatelessWidget {
                               EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                           child: MiniFlatButton(
                             child: Text("✓ Tasks"),
-                            onPressed: () {},
+                            onPressed: () => Navigator.pushNamed(
+                                context, '/child_tasks',
+                                arguments: {'index': this.index}),
                           ),
                         ),
                       ],

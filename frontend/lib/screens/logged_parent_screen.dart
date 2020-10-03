@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kidromeda/screens/my_children_page.dart';
 import 'package:kidromeda/screens/my_profile_page.dart';
-import '../widgets/add_child_dialog.dart';
-import '../widgets/custom_snackbar.dart';
 import '../utils/string_utils.dart';
 
 class LoggedParentScreen extends StatefulWidget {

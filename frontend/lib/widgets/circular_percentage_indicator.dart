@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 class CircularPercentageIndicator extends StatelessWidget {
   final double value;
   final double size;
-  const CircularPercentageIndicator({Key key, @required this.value, @required this.size})
+  final double strokeWidth;
+
+  const CircularPercentageIndicator(
+      {Key key, @required this.value, @required this.size, this.strokeWidth = 4})
       : super(key: key);
 
   @override
@@ -16,6 +19,7 @@ class CircularPercentageIndicator extends StatelessWidget {
               width: this.size,
               height: this.size,
               child: CircularProgressIndicator(
+                  strokeWidth: this.strokeWidth,
                   value: this.value,
                   valueColor: AlwaysStoppedAnimation<Color>(
                       Theme.of(context).primaryColor))),
@@ -23,6 +27,7 @@ class CircularPercentageIndicator extends StatelessWidget {
               alignment: Alignment.center,
               child: Text(
                 '${(this.value * 100).toInt()}%',
+                style: TextStyle(fontSize: this.size / 4),
               ))
         ]));
   }
