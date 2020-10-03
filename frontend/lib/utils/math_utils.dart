@@ -1,7 +1,7 @@
 import '../models/task.dart';
 
 List<Task> getPendingTasks(List<Task> tasks) {
-  List<Task> pendingTasks;
+  List<Task> pendingTasks = [];
 
   for (int i = 0; i < tasks.length; i++) {
     if (tasks[i].status == 1) {
@@ -12,7 +12,7 @@ List<Task> getPendingTasks(List<Task> tasks) {
 }
 
 List<Task> getRemainingTask(List<Task> tasks) {
-  List<Task> pendingTasks;
+  List<Task> pendingTasks = [];
 
   for (int i = 0; i < tasks.length; i++) {
     if (tasks[i].status == 0) {
@@ -23,7 +23,7 @@ List<Task> getRemainingTask(List<Task> tasks) {
 }
 
 List<Task> getCompletedTaskas(List<Task> tasks) {
-  List<Task> pendingTasks;
+  List<Task> pendingTasks = [];
 
   for (int i = 0; i < tasks.length; i++) {
     if (tasks[i].status == 2) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kidromeda/utils/math_utils.dart';
 import 'package:kidromeda/widgets/child_details_card.dart';
 import 'package:kidromeda/models/kid.dart';
 import 'package:kidromeda/widgets/task_info_card.dart';
@@ -62,22 +63,21 @@ class _ChildTasksPageState extends State<ChildTasksPage> {
             style:
                 TextStyle(color: Colors.black54, fontWeight: FontWeight.w700)));
 
-    final pendingTasks =
-        widget.kid.tasks.where((task) => task.status == 1).toList();
+    final pendingTasks = getPendingTasks(widget.kid.tasks);
     if (pendingTasks.isNotEmpty) {
       widgets.add(renderHeading("Pending"));
       widgets.addAll(pendingTasks.map(renderTask));
     }
 
-    final remainingTasks =
-        widget.kid.tasks.where((task) => task.status == 0).toList();
+    final remainingTasks = getRemainingTask(widget.kid.tasks);
+
     if (remainingTasks.isNotEmpty) {
       widgets.add(renderHeading("Remaining"));
       widgets.addAll(remainingTasks.map(renderTask));
     }
 
-    final completedTasks =
-        widget.kid.tasks.where((task) => task.status == 2).toList();
+    final completedTasks = getCompletedTaskas(widget.kid.tasks);
+
     if (completedTasks.isNotEmpty) {
       widgets.add(renderHeading("Completed"));
       widgets.addAll(completedTasks.map(renderTask));
