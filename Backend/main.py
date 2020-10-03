@@ -25,9 +25,19 @@ def verify_password(username, password):
         c = conn.cursor()
         query = "SELECT PASSWORD FROM Kid WHERE EMAIL = '" + username + "'"
         c.execute(query)
-        password_db = c.fetchone()[0]
-        if check_password_hash(password_db, password):
-            return username
+        keep = c.fetchone()
+        if keep is not None:
+            password_db = keep[0]
+            if check_password_hash(password_db, password):
+                return username
+
+        query = "SELECT PASSWORD FROM Parent WHERE EMAIL = '" + username + "'"
+        c.execute(query)
+        keep = c.fetchone()
+        if keep is not None:
+            password_db = keep[0]
+            if check_password_hash(password_db, password):
+                return username
 
 
 
@@ -48,7 +58,6 @@ def verify_password(username, password):
 
 
 @app.route('/parent/<int:id>/kid', methods=['POST'])
-@auth.login_required
 def register_kid(id):
     try:
         conn = sqlite3.connect('/Users/dpavlovski/Desktop/paysafe-hackathon-vmv/Backend/Kidromeda.db')
@@ -90,7 +99,6 @@ def register_kid(id):
 
 
 @app.route('/parent', methods=['POST'])
-@auth.login_required
 def register_parent():
     try:
         conn = sqlite3.connect('/Users/dpavlovski/Desktop/paysafe-hackathon-vmv/Backend/Kidromeda.db')
@@ -154,15 +162,33 @@ def register_task():
 
 @app.route('/login', methods=['GET'])
 @auth.login_required
-def login_kid():
-    try:
-        json_temp = "{}"
-        temp_response = json.loads(json_temp)
-        response = make_response(temp_response, 200)
-        return response
-    except:
-        response = make_response(jsonify({"error": "Not found"}), 404)
-        return response
+def login():
+    email = auth.username()
+
+    conn = sqlite3.connect('/Users/dpavlovski/Desktop/paysafe-hackathon-vmv/Backend/Kidromeda.db')
+    c = conn.cursor()
+
+    query = "SELECT NAME FROM Kid WHERE EMAIL = '" + email + "'"
+    c.execute(query)
+    keep = c.fetchone()
+    if keep is not None:
+        name = keep[0]
+        response = {'name': name, 'is_parent': False}
+
+        return make_response(jsonify(response), 200)
+
+    query = "SELECT NAME FROM Parent WHERE EMAIL = '" + email + "'"
+    c.execute(query)
+    keep = c.fetchone()
+    if keep is not None:
+        name = keep[0]
+        response = {'name': name, 'is_parent': True}
+
+        return make_response(jsonify(response), 200)
+
+    response = make_response(jsonify({"error": "Not found"}), 404)
+    return response
+
 
 
 """
