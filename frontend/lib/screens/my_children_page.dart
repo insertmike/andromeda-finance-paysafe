@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:kidromeda/widgets/child_info_card.dart';
-import 'package:kidromeda/widgets/circular_percentage_indicator.dart';
 
 class MyChildrenPage extends StatelessWidget {
   @override
@@ -15,9 +14,9 @@ class MyChildrenPage extends StatelessWidget {
             balance: 400,
             completedTasks: 7,
             totalTasks: 10,
-          )
+          ),
         ],
-      )
+      ),
     );
   }
 }

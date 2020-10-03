@@ -25,6 +25,25 @@ class _LoggedHomeScreenState extends State<LoggedParentScreen> {
     MyProfilePage()
   ];
 
+  static List<Widget Function(BuildContext)> _appBarActions = [
+    (BuildContext context) {
+      return IconButton(
+          icon: Icon(Icons.add),
+          onPressed: () => Navigator.pushReplacementNamed(
+                context,
+                '/add_child',
+      ));
+    },
+    (BuildContext context) {
+      return IconButton(
+          icon: Icon(Icons.exit_to_app),
+          onPressed: () => Navigator.pushReplacementNamed(
+                context,
+                '/',
+      ));
+    },
+  ];
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -51,14 +70,7 @@ class _LoggedHomeScreenState extends State<LoggedParentScreen> {
         elevation: 0.0,
         actions: <Widget>[
           SizedBox.shrink(),
-          _selectedIndex == 1
-              ? IconButton(
-                  icon: Icon(Icons.exit_to_app),
-                  onPressed: () => Navigator.pushReplacementNamed(
-                        context,
-                        '/',
-                      ))
-              : SizedBox.shrink(),
+          _appBarActions[_selectedIndex](context),
         ],
       ),
       body: IndexedStack(
