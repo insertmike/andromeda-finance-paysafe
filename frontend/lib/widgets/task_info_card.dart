@@ -17,6 +17,9 @@ class TaskInfoCard extends StatelessWidget {
     final icon =
         [Icons.hourglass_empty, Icons.warning, Icons.check][this.status];
 
+    final buttonWrapper =
+        (widget) => Padding(padding: EdgeInsets.only(right: 8), child: widget);
+
     return Container(
         padding: EdgeInsets.all(16),
         alignment: Alignment.center,
@@ -28,27 +31,32 @@ class TaskInfoCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(children: [
-              Icon(icon),
-              Text(this.summary),
-            ]),
+            Padding(
+              padding: EdgeInsets.only(bottom: 16),
+              child: Row(children: [
+                Icon(icon),
+                Text(this.summary),
+              ]),
+            ),
             Row(children: [
               status == 0 || status == 2
                   ? SizedBox.shrink()
-                  : MiniFlatButton(
+                  : buttonWrapper(MiniFlatButton(
+                      color: Colors.green.shade100,
                       child: Text("✓ Confirm"),
                       onPressed: () {},
-                    ),
+                    )),
               status == 2
                   ? SizedBox.shrink()
-                  : MiniFlatButton(
+                  : buttonWrapper(MiniFlatButton(
+                      color: Colors.red.shade100,
                       child: Text("X Deny"),
                       onPressed: () {},
-                    ),
-              MiniFlatButton(
+                    )),
+              buttonWrapper(MiniFlatButton(
                 child: Text("🛈 Details"),
                 onPressed: () {},
-              ),
+              )),
             ])
           ],
         ));
