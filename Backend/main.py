@@ -55,8 +55,6 @@ def verify_password(username, password):
              response - 201
             
 """
-
-
 @app.route('/parent/<int:id>/kid', methods=['POST'])
 def register_kid(id):
     try:
@@ -70,7 +68,7 @@ def register_kid(id):
         balance = 0
         parent_id = id
 
-        c.execute("INSERT INTO Kid(NAME,Email,PASSWORD,BALANCE,Parent_id) VALUES (?, ?, ?, ?, ?)",
+        c.execute("INSERT INTO KID(NAME,Email,PASSWORD,BALANCE,Parent_id) VALUES (?, ?, ?, ?, ?)",
                   (name, email, generate_password_hash(password),balance,parent_id))
         conn.commit()
 
@@ -96,8 +94,6 @@ def register_kid(id):
 
              response - 201
 """
-
-
 @app.route('/parent', methods=['POST'])
 def register_parent():
     try:
@@ -132,12 +128,25 @@ def register_parent():
                 
               response - 201
 """
-
-
 @app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task', methods=['POST'])
 @auth.login_required
-def register_task():
+def register_task(kid_id):
     try:
+        conn = sqlite3.connect('/Users/dpavlovski/Desktop/paysafe-hackathon-vmv/Backend/Kidromeda.db')
+        c = conn.cursor()
+
+        #add checking for parent permision to change the kid( is this the parent of the kid)
+
+        summary = request.json.get('summary')
+        reward = request.json.get('reward')
+        completed = 0
+        comment = ""
+        url = ""
+
+        c.execute("INSERT INTO TASK(SUMMARY,REWARD,COMPLETED,COMMENT,URL,Kid_id) VALUES (?, ?, ?, ?, ?, ?)",
+                  (summary, reward,completed,comment,url,kid_id))
+        conn.commit()
+
         json_temp = "{}"
         temp_response = json.loads(json_temp)
         response = make_response(temp_response, 201)
@@ -156,10 +165,11 @@ def register_task():
             {
                 "is_parent": "VALUE",
                 "name": "VALUE"
+                "email":"VALUE",
+                "current_id":"VALUE"
+                
             }
 """
-
-
 @app.route('/login', methods=['GET'])
 @auth.login_required
 def login():
@@ -168,21 +178,24 @@ def login():
     conn = sqlite3.connect('/Users/dpavlovski/Desktop/paysafe-hackathon-vmv/Backend/Kidromeda.db')
     c = conn.cursor()
 
-    query = "SELECT NAME FROM Kid WHERE EMAIL = '" + email + "'"
+    query = "SELECT NAME, ID FROM Kid WHERE EMAIL = '" + email + "'"
     c.execute(query)
     keep = c.fetchone()
     if keep is not None:
         name = keep[0]
-        response = {'name': name, 'is_parent': False}
+        id = keep[1]
+
+        response = {'name': name, 'is_parent': False, 'email': email, 'current_id':id}
 
         return make_response(jsonify(response), 200)
 
-    query = "SELECT NAME FROM Parent WHERE EMAIL = '" + email + "'"
+    query = "SELECT NAME, ID FROM Parent WHERE EMAIL = '" + email + "'"
     c.execute(query)
     keep = c.fetchone()
     if keep is not None:
         name = keep[0]
-        response = {'name': name, 'is_parent': True}
+        id = keep[1]
+        response = {'name': name, 'is_parent': True,'email': email, 'current_id':id}
 
         return make_response(jsonify(response), 200)
 
@@ -199,12 +212,24 @@ def login():
                     
 {children: { name, balance, tasks: [{ summary, status, reward, image: string|null, comment: string }] }
 """
-
-
-@app.route('/parent/<int:id>/kid', methods=['GET'])
+@app.route('/parent/<int:parent_id>/kid', methods=['GET'])
 @auth.login_required
-def parent_ID_kids(id):
+def parent_id_kids(parent_id):
     try:
+        conn = sqlite3.connect('/Users/dpavlovski/Desktop/paysafe-hackathon-vmv/Backend/Kidromeda.db')
+        c = conn.cursor()
+        query = "SELECT ID FROM KID WHERE Parent_id = '" + str(parent_id) + "'"
+        c.execute(query)
+        keep = c.fetchone()
+        print(keep)
+
+        if keep is not None:
+            for entry in keep:
+                query = "SELECT * FROM TASK WHERE Kid_id = '" + str(entry) + "'"
+                c.execute(query)
+                keep1 = c.fetchone()
+                print(keep1)
+
         json_temp = "{}"
         temp_response = json.loads(json_temp)
         response = make_response(temp_response, 200)
