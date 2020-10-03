@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kidromeda/screens/logged_parent_screen.dart';
 import './default_btn.dart';
 import 'custom_snackbar.dart';
+import '../theme.dart';
 
 class LoginForm extends StatefulWidget {
   @override
@@ -22,24 +23,7 @@ class _LoginFormState extends State<LoginForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           TextFormField(
-            decoration: InputDecoration(
-              border: new OutlineInputBorder(
-                  borderRadius: const BorderRadius.all(
-                const Radius.circular(0.0),
-              )),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(0.0),
-                borderSide: BorderSide(
-                  color: Theme.of(context).accentColor,
-                ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(5.0),
-                borderSide: BorderSide(
-                  color: Theme.of(context).primaryColor,
-                  width: 1.5,
-                ),
-              ),
+            decoration: customInputDecoration.copyWith(
               labelText: 'Email',
             ),
             onChanged: (value) => _email = value,
@@ -47,24 +31,7 @@ class _LoginFormState extends State<LoginForm> {
           const SizedBox(height: 16.0),
           TextFormField(
             obscureText: true,
-            decoration: InputDecoration(
-              border: new OutlineInputBorder(
-                  borderRadius: const BorderRadius.all(
-                const Radius.circular(0.0),
-              )),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(0.0),
-                borderSide: BorderSide(
-                  color: Theme.of(context).accentColor,
-                ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(5.0),
-                borderSide: BorderSide(
-                  color: Theme.of(context).primaryColor,
-                  width: 1.5,
-                ),
-              ),
+            decoration: customInputDecoration.copyWith(
               labelText: 'Password',
             ),
             onChanged: (value) => _password = value,

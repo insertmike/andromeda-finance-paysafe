@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:kidromeda/screens/my_children_page.dart';
 import 'package:kidromeda/screens/my_profile_page.dart';
+import 'package:kidromeda/widgets/default_btn.dart';
+import '../widgets/add_child_dialog.dart';
+import '../widgets/custom_snackbar.dart';
 
 class LoggedParentScreen extends StatefulWidget {
   static const routeName = '/logged_home';
@@ -28,11 +31,16 @@ class _LoggedHomeScreenState extends State<LoggedParentScreen> {
   static List<Widget Function(BuildContext)> _appBarActions = [
     (BuildContext context) {
       return IconButton(
-          icon: Icon(Icons.add),
-          onPressed: () => Navigator.pushReplacementNamed(
-                context,
-                '/add_child',
-      ));
+        icon: Icon(Icons.add),
+        onPressed: () => showAddChildDialog(context).then(
+          (val) => {
+            if (val == true)
+              {CustomSnackbar.buildSuccessSnackBar(context, 'Success')}
+            else
+              {CustomSnackbar.buildSuccessSnackBar(context, 'Failed')}
+          },
+        ),
+      );
     },
     (BuildContext context) {
       return IconButton(
@@ -40,7 +48,7 @@ class _LoggedHomeScreenState extends State<LoggedParentScreen> {
           onPressed: () => Navigator.pushReplacementNamed(
                 context,
                 '/',
-      ));
+              ));
     },
   ];
 
