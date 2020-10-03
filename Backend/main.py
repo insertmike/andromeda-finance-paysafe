@@ -70,7 +70,7 @@ def register_kid(id):
         balance = 0
         parent_id = id
 
-        c.execute("INSERT INTO Kid(NAME,Email,PASSWORD,BALANCE,Parent_id) VALUES (?, ?, ?, ?, ?)",
+        c.execute("INSERT INTO KID(NAME,Email,PASSWORD,BALANCE,Parent_id) VALUES (?, ?, ?, ?, ?)",
                   (name, email, generate_password_hash(password),balance,parent_id))
         conn.commit()
 
@@ -136,8 +136,21 @@ def register_parent():
 
 @app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task', methods=['POST'])
 @auth.login_required
-def register_task():
+def register_task(kid_id):
     try:
+        conn = sqlite3.connect('/Users/dpavlovski/Desktop/paysafe-hackathon-vmv/Backend/Kidromeda.db')
+        c = conn.cursor()
+
+        summary = request.json.get('summary')
+        reward = request.json.get('reward')
+        completed = 0
+        comment = ""
+        url = ""
+
+        c.execute("INSERT INTO TASK(SUMMARY,REWARD,COMPLETED,COMMENT,URL,Kid_id) VALUES (?, ?, ?, ?, ?, ?)",
+                  (summary, reward,completed,comment,url,kid_id))
+        conn.commit()
+
         json_temp = "{}"
         temp_response = json.loads(json_temp)
         response = make_response(temp_response, 201)
