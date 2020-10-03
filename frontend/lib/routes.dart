@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kidromeda/screens/child_tasks_page.dart';
+import 'package:kidromeda/screens/logged_child_screen.dart';
 import './screens/login_screen.dart';
 import './screens/logged_parent_screen.dart';
 import './screens/add_kid_screen.dart';
@@ -10,6 +11,8 @@ class Routes {
     '/': (BuildContext context) => LoginScreen(),
     LoggedParentScreen.routeName: (BuildContext context) =>
         LoggedParentScreen(),
+    LoggedChildScreen.routeName: (BuildContext context) =>
+        LoggedChildScreen(),
     ChildTasksPage.routeName: (BuildContext context) =>
       ChildTasksPage(),
     AddKidScreen.routeName: (BuildContext context) => AddKidScreen(),

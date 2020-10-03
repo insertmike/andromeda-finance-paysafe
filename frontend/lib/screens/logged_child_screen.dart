@@ -1,28 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:kidromeda/models/task.dart';
-import 'package:kidromeda/utils/math_utils.dart';
-import 'package:kidromeda/widgets/child_details_card.dart';
 import 'package:kidromeda/models/kid.dart';
+import 'package:kidromeda/utils/mockup_data.dart';
+import 'package:kidromeda/widgets/child_details_card.dart';
+import 'package:kidromeda/widgets/child_task_card.dart';
 import 'package:kidromeda/widgets/segregated_task_list.dart';
-import 'package:kidromeda/widgets/task_info_card.dart';
-import '../models/kid.dart';
 
-class ChildTasksPage extends StatefulWidget {
-  static const routeName = '/child_tasks';
-  final Kid kid;
-  ChildTasksPage({this.kid});
-  @override
-  _ChildTasksPageState createState() => _ChildTasksPageState();
-}
+class LoggedChildScreen extends StatelessWidget {
+  static const routeName = '/logged_child';
 
-class _ChildTasksPageState extends State<ChildTasksPage> {
   @override
   Widget build(BuildContext context) {
+    // FIXME
+    Kid kid = getChildren().first;
+
     return Scaffold(
         appBar: AppBar(
-          title: Text("${widget.kid.name}'s Tasks"),
+          title: Text("My Tasks"),
           centerTitle: true,
           elevation: 0.0,
+          actions: <Widget>[
+            IconButton(
+                icon: Icon(Icons.exit_to_app),
+                onPressed: () => Navigator.pushReplacementNamed(
+                      context,
+                      '/',
+                    )),
+          ],
         ),
         body: SingleChildScrollView(
             physics: ScrollPhysics(),
@@ -36,13 +39,13 @@ class _ChildTasksPageState extends State<ChildTasksPage> {
                   Padding(
                     padding: EdgeInsets.only(bottom: 8),
                     child: ChildDetailsCard(
-                      kid: widget.kid,
+                      kid: kid,
                     ),
                   ),
                   SegregatedTaskList(
                     physics: NeverScrollableScrollPhysics(),
-                    tasks: widget.kid.tasks,
-                    builder: (context, task) => TaskInfoCard(task: task),
+                    tasks: kid.tasks,
+                    builder: (context, task) => ChildTaskCard(task: task),
                   )
                 ],
             )))

@@ -8,8 +8,9 @@ import '../models/task.dart';
 
 class ChildDetailsCard extends StatefulWidget {
   final Kid kid;
+  final bool canAddTasks;
 
-  const ChildDetailsCard({this.kid});
+  const ChildDetailsCard({this.kid, this.canAddTasks = false});
 
   @override
   _ChildDetailsCardState createState() => _ChildDetailsCardState();
@@ -52,7 +53,7 @@ class _ChildDetailsCardState extends State<ChildDetailsCard> {
                   "${getCompletedTasks(this.widget.kid.tasks)} out of ${this.widget.kid.tasks.length} completed",
                 ),
               ),
-              Padding(
+              widget.canAddTasks ? Padding(
                 padding: EdgeInsets.only(top: 8),
                 child: MiniFlatButton(
                   child: Text("+ Add Task"),
@@ -60,7 +61,7 @@ class _ChildDetailsCardState extends State<ChildDetailsCard> {
                       builder: (context) =>
                           NewTaskScreen(widget.kid.name, widget.kid.id))),
                 ),
-              ),
+              ) : SizedBox.shrink(),
             ],
           ),
           CircularPercentageIndicator(
