@@ -1,11 +1,30 @@
 import json
+
+import flask
 from flask import make_response, jsonify
 from flask import Flask, request
-
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import generate_password_hash, check_password_hash
+import sqlite3
 
 app = Flask(__name__)
+auth = HTTPBasicAuth()
+
+conn = sqlite3.connect('/Users/dpavlovski/Desktop/paysafe-hackathon-vmv/Backend/Kidromeda.db')
+c = conn.cursor()
+
+users = {
+    "john": generate_password_hash("hello"),
+    "susan": generate_password_hash("bye")
+}
+
+
+@auth.verify_password
+def verify_password(username, password):
+    if username in users and \
+            check_password_hash(users.get(username), password):
+        return username
+
 
 """
    Register kid (POST) parent id - 
@@ -17,9 +36,24 @@ app = Flask(__name__)
             
 """
 
+
 @app.route('/parent/<int:id>/kid', methods=['POST'])
-def register_kid():
+@auth.login_required
+def register_kid(id):
     try:
+        conn = sqlite3.connect('/Users/dpavlovski/Desktop/paysafe-hackathon-vmv/Backend/Kidromeda.db')
+        c = conn.cursor()
+
+        name = request.json.get('name')
+        email = request.json.get('email')
+        password = request.json.get('password')
+        balance = 0
+        parent_id = id
+
+        c.execute("INSERT INTO Kid(NAME,Email,PASSWORD,BALANCE,Parent_id) VALUES (?, ?, ?, ?, ?)",
+                  (name, email, generate_password_hash(password),balance,parent_id))
+        conn.commit()
+
         json_temp = "{}"
         temp_response = json.loads(json_temp)
         response = make_response(temp_response, 201)
@@ -41,8 +75,20 @@ def register_kid():
 
 
 @app.route('/parent', methods=['POST'])
+@auth.login_required
 def register_parent():
     try:
+        conn = sqlite3.connect('/Users/dpavlovski/Desktop/paysafe-hackathon-vmv/Backend/Kidromeda.db')
+        c = conn.cursor()
+
+        name = request.json.get('name')
+        email = request.json.get('email')
+        password = request.json.get('password')
+
+        c.execute("INSERT INTO Parent(NAME,Email,PASSWORD) VALUES (?, ?, ?)",
+                  (name, email, generate_password_hash(password)))
+        conn.commit()
+
         json_temp = "{}"
         temp_response = json.loads(json_temp)
         response = make_response(temp_response, 201)
@@ -60,7 +106,9 @@ def register_parent():
               response - 201
 """
 
+
 @app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task', methods=['POST'])
+@auth.login_required
 def register_task():
     try:
         json_temp = "{}"
@@ -80,7 +128,9 @@ def register_task():
             response - 200 is_kid, name
 """
 
+
 @app.route('/login', methods=['POST'])
+@auth.login_required
 def login_kid():
     try:
         json_temp = "{}"
@@ -103,7 +153,9 @@ def login_kid():
                     4.kid_task state
 """
 
+
 @app.route('/parent/<int:id>/kid', methods=['GET'])
+@auth.login_required
 def parent_ID_kids(id):
     try:
         json_temp = "{}"
@@ -127,7 +179,9 @@ def parent_ID_kids(id):
                 5.Kid_balance
 """
 
+
 @app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task', methods=['GET'])
+@auth.login_required
 def kid_tasks():
     try:
         json_temp = "{}"
@@ -147,7 +201,9 @@ def kid_tasks():
                 4.Comment
 """
 
+
 @app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task', methods=['PUT'])
+@auth.login_required
 def kid_tasks_put():
     try:
         json_temp = "{}"
@@ -157,7 +213,6 @@ def kid_tasks_put():
     except:
         response = make_response(jsonify({"error": "Not found"}), 404)
         return response
-
 
 
 """
@@ -173,7 +228,9 @@ def kid_tasks_put():
             5.State
 """
 
+
 @app.route('/full_kid_tasks', methods=['GET'])
+@auth.login_required
 def kid_tasks_all():
     try:
         json_temp = "{}"
@@ -195,7 +252,9 @@ def kid_tasks_all():
             200
 """
 
+
 @app.route('/full_kid_tasks', methods=['POST'])
+@auth.login_required
 def kid_tasks_all_put():
     try:
         json_temp = "{}"
