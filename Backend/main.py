@@ -79,24 +79,21 @@ def verify_password(username, password):
 @app.route('/parent/<int:id>/kid', methods=['POST'])
 def register_kid(id):
     try:
-        conn = sqlite3.connect(os.getcwd() + '/Kidromeda.db')
-        c = conn.cursor()
-
         name = request.json.get('name')
         email = request.json.get('email')
         password = request.json.get('password')
-
         balance = 0
         parent_id = id
-
-        c.execute("INSERT INTO KID(NAME,Email,PASSWORD,BALANCE,Parent_id) VALUES (?, ?, ?, ?, ?)",
-                  (name, email, generate_password_hash(password),balance,parent_id))
-        conn.commit()
-
-        json_temp = "{}"
-        temp_response = json.loads(json_temp)
-        response = make_response(temp_response, 201)
-        return response
+        res = query_db('INSERT INTO KID(NAME,Email,PASSWORD,BALANCE,Parent_id) VALUES (?, ?, ?, ?, ?)', [name, email, generate_password_hash(password),balance,parent_id])
+        # Get Last Entry
+        res = query_db('SELECT * FROM kid ORDER BY id DESC', one = True)
+        id = res[0]
+        name = res[1]
+        email = res[2]
+        balance = res[4]
+        parent_id = res[5]
+        response = {'id': id, 'name': name, 'is_parent': True, 'email': email, 'balance': balance, 'parent_id':parent_id}
+        return make_response(jsonify(response), 201)
     except:
         response = make_response(jsonify({"error": "Not found"}), 404)
         return response
@@ -146,10 +143,7 @@ def register_parent():
 @auth.login_required
 def get_parent():
     try:
-        conn = sqlite3.connect(os.getcwd() + '/Kidromeda.db')
-        c = conn.cursor()
-        parent = query_db('SELECT id, name,  email FROM parent WHERE parent.email = ?',
-                [auth.username()], one=True)
+        parent = query_db('SELECT id, name,  email FROM parent WHERE parent.email = ?', [auth.username()], one=True)
         id = parent[0]
         name = parent[1]
         email = parent[2]
@@ -183,12 +177,13 @@ def register_task(kid_id):
         reward = request.json.get('reward')
         completed = 0
         comment = ""
-        url = ""
-
-        c.execute("INSERT INTO TASK(SUMMARY,REWARD,COMPLETED,COMMENT,URL,Kid_id) VALUES (?, ?, ?, ?, ?, ?)",
-                  (summary, reward,completed,comment,url,kid_id))
-        conn.commit()
-
+        print('woo')
+        res = query_db('INSERT INTO TASK(SUMMARY,REWARD,COMPLETED,COMMENT,Kid_id) VALUES (?, ?, ?, ?, ?, ?)', [summary, reward,completed,comment,kid_id])
+        # Get Last Entry
+        res = query_db('SELECT FROM task ORDER BY id DESC', [summary, reward,completed,comment,kid_id], one = True)
+        print(res)
+        print('woo')
+        print(res)
         json_temp = "{}"
         temp_response = json.loads(json_temp)
         response = make_response(temp_response, 201)
