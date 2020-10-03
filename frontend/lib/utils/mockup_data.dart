@@ -5,6 +5,7 @@ List<Kid> getChildren() {
   String sampleResponse = '''{
         "children": [
             {
+                "id":1,
                 "parent_id": 0,
                 "name": "Dexter",
                 "balance": 100.0,
@@ -30,6 +31,7 @@ List<Kid> getChildren() {
                 ]
             },
             {
+                "id":2,
                 "parent_id": 0,
                 "name": "Dee Dee",
                 "balance": 50.0,

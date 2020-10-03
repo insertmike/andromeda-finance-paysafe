@@ -1,22 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:kidromeda/widgets/circular_percentage_indicator.dart';
 import 'package:kidromeda/widgets/mini_flat_button.dart';
+import '../models/kid.dart';
+import '../utils/math_utils.dart';
+import '../screens/child_tasks_page.dart';
 
 class ChildInfoCard extends StatelessWidget {
-  final int index;
-  final String name;
-  final double balance;
-  final int completedTasks;
-  final int totalTasks;
+  final Kid kid;
 
-  const ChildInfoCard(
-      {Key key,
-      @required this.index,
-      @required this.name,
-      @required this.balance,
-      @required this.completedTasks,
-      @required this.totalTasks})
-      : super(key: key);
+  const ChildInfoCard({Key key, @required this.kid}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,22 +25,24 @@ class ChildInfoCard extends StatelessWidget {
           children: [
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <
                 Widget>[
-              Text(this.name,
+              Text(this.kid.name,
                   style:
                       TextStyle(fontSize: 24.0, fontWeight: FontWeight.w700)),
-              Text("₩ ${this.balance}",
+              Text("₩ ${this.kid.balance}",
                   style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w300))
             ]),
             Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   CircularPercentageIndicator(
-                      value: this.completedTasks / this.totalTasks, size: 48),
+                      value: getCompletedTasksNumber(this.kid.tasks) /
+                          this.kid.tasks.length,
+                      size: 48),
                   Column(children: <Widget>[
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 8),
                       child: Text(
-                          "${this.completedTasks} out of ${this.totalTasks} completed"),
+                          "${getCompletedTasksNumber(this.kid.tasks)} out of ${this.kid.tasks.length} completed"),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -66,9 +60,10 @@ class ChildInfoCard extends StatelessWidget {
                               EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                           child: MiniFlatButton(
                             child: Text("✓ Tasks"),
-                            onPressed: () => Navigator.pushNamed(
-                                context, '/child_tasks',
-                                arguments: {'index': this.index}),
+                            onPressed: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ChildTasksPage(kid: kid))),
                           ),
                         ),
                       ],
