@@ -15,6 +15,8 @@ class ChildTasksPage extends StatefulWidget {
 class _ChildTasksPageState extends State<ChildTasksPage> {
   @override
   Widget build(BuildContext context) {
+    final list = buildList(context);
+
     return Scaffold(
         appBar: AppBar(
           title: Text("${widget.kid.name}'s Tasks"),
@@ -36,13 +38,51 @@ class _ChildTasksPageState extends State<ChildTasksPage> {
                 ),
                 ListView.builder(
                     physics: NeverScrollableScrollPhysics(),
-                    itemCount: widget.kid.tasks.length,
+                    itemCount: list.length,
                     shrinkWrap: true,
-                    itemBuilder: (context, index) => TaskInfoCard(
-                          summary: widget.kid.tasks[index].summary,
-                          status: widget.kid.tasks[index].status,
-                        )),
+                    itemBuilder: (context, index) => list[index]),
               ],
             )));
+  }
+
+  @override
+  List<Widget> buildList(BuildContext context) {
+    final widgets = <Widget>[];
+
+    final renderTask = (task) => Padding(
+        padding: EdgeInsets.symmetric(vertical: 8),
+        child: TaskInfoCard(
+          summary: task.summary,
+          status: task.status,
+        ));
+
+    final renderHeading = (text) => Padding(
+        padding: EdgeInsets.symmetric(vertical: 8),
+        child: Text(text,
+            style:
+                TextStyle(color: Colors.black54, fontWeight: FontWeight.w700)));
+
+    final pendingTasks =
+        widget.kid.tasks.where((task) => task.status == 1).toList();
+    if (pendingTasks.isNotEmpty) {
+      widgets.add(renderHeading("Pending"));
+      widgets.addAll(pendingTasks.map(renderTask));
+    }
+
+    final remainingTasks =
+        widget.kid.tasks.where((task) => task.status == 0).toList();
+    if (remainingTasks.isNotEmpty) {
+      widgets.add(renderHeading("Remaining"));
+      widgets.addAll(remainingTasks.map(renderTask));
+    }
+
+    final completedTasks =
+        widget.kid.tasks.where((task) => task.status == 2).toList();
+    if (completedTasks.isNotEmpty) {
+      widgets.add(renderHeading("Completed"));
+      widgets.addAll(completedTasks.map(renderTask));
+    }
+
+    return widgets;
   }
 }
