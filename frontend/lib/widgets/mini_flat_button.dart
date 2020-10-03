@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 class MiniFlatButton extends StatelessWidget {
   final Widget child;
   final VoidCallback onPressed;
+  final Color color;
 
   const MiniFlatButton(
-      {Key key, @required this.child, @required VoidCallback this.onPressed})
+      {Key key, this.color, @required this.child, @required VoidCallback this.onPressed})
       : super(key: key);
 
   @override
@@ -14,7 +15,7 @@ class MiniFlatButton extends StatelessWidget {
       child: RaisedButton(
         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
         onPressed: this.onPressed,
-        color: Theme.of(context).primaryColorLight,
+        color: this.color ?? Theme.of(context).primaryColorLight,
         child: this.child,
         elevation: 0,
         shape: RoundedRectangleBorder(

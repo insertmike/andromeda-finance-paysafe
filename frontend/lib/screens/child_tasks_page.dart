@@ -26,24 +26,27 @@ class _ChildTasksPageState extends State<ChildTasksPage> {
         ),
         body: SingleChildScrollView(
             physics: ScrollPhysics(),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.all(8),
-                  child: ChildDetailsCard(
-                    kid: widget.kid,
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 8),
+                    child: ChildDetailsCard(
+                      kid: widget.kid,
+                    ),
                   ),
-                ),
-                ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: list.length,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) => list[index]),
-              ],
-            )));
+                  ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: list.length,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) => list[index]),
+                ],
+            )))
+    );
   }
 
   @override
