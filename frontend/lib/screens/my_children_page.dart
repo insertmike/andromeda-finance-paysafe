@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:kidromeda/widgets/child_info_card.dart';
 import '../models/kid.dart';
 import 'dart:convert';
+import '../utils/string_utils.dart';
 
 class MyChildrenPage extends StatelessWidget {
   String sampleResponse =
-      '{ "children": [{ "parent_id": 0, "name": "Dexter", "balance": 100.0, "tasks": [{ "summary": "Task 1", "status": 0, "reward": 50.0, "comment": null }] },{ "parent_id": 0, "name": "Dexter", "balance": 100.0, "tasks": [{ "summary": "Task 1", "status": 0, "reward": 50.0, "comment": null }] },] }';
+      '{ "children": [{ "parent_id": 0, "name": "Dexter", "balance": 100.0, "tasks": [{ "summary": "Task 1", "status": 0, "reward": 50.0, "comment": null }] }] }';
   @override
   Widget build(BuildContext context) {
     List<Kid> children = json
@@ -34,4 +35,58 @@ class MyChildrenPage extends StatelessWidget {
       },
     ));
   }
+}
+
+_displayAddKidDialog(BuildContext context) async {
+  final GlobalKey<FormState> _deleteFormKey = GlobalKey<FormState>();
+  String _password;
+  String _newPassword;
+  return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Password Change'),
+          content: Form(
+            key: _deleteFormKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                TextFormField(
+                  obscureText: true,
+                  validator: isPasswordCompliant,
+                  onChanged: (val) => _password = val,
+                  decoration: InputDecoration(
+                    hintText: "Current Password",
+                  ),
+                ),
+                TextFormField(
+                  obscureText: true,
+                  validator: isPasswordCompliant,
+                  onChanged: (val) => _newPassword = val,
+                  decoration: InputDecoration(hintText: "New Password"),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: new Text(
+                'Change Password',
+                style: TextStyle(color: Theme.of(context).accentColor),
+              ),
+              onPressed: () {
+                if (_deleteFormKey.currentState.validate()) {
+                  // send request
+                }
+              },
+            ),
+          ],
+        );
+      });
 }

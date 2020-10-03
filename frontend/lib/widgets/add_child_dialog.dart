@@ -2,14 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/default_btn.dart';
 import '../theme.dart';
 
-Future showAddChildDialog(BuildContext context) async {
-  await showDialog<Null>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return new AddKidDialog();
-      });
-}
+Future showAddChildDialog(BuildContext context) async {}
 
 class AddKidDialog extends StatelessWidget {
   const AddKidDialog({
@@ -22,25 +15,7 @@ class AddKidDialog extends StatelessWidget {
       child: new AlertDialog(
         title: new Text('Add Child'),
         content: Column(
-          children: <Widget>[
-            new TextField(
-              decoration: customInputDecoration.copyWith(hintText: 'Name'),
-            ),
-            new TextField(
-              decoration: customInputDecoration.copyWith(hintText: 'Email'),
-            ),
-            new TextField(
-              decoration: customInputDecoration.copyWith(hintText: 'Password'),
-            ),
-            new TextField(
-              decoration:
-                  customInputDecoration.copyWith(hintText: 'Confirm Password'),
-            ),
-            new FlatButton(
-              child: defaultBtn(context, 'ADD'),
-              onPressed: () => {Navigator.of(context).pop()},
-            )
-          ],
+          children: <Widget>[],
         ),
         actions: <Widget>[
           new FlatButton(
