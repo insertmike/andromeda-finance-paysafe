@@ -2,20 +2,22 @@ import json
 from flask import make_response, jsonify
 from flask import Flask, request
 
+from flask_httpauth import HTTPBasicAuth
+from werkzeug.security import generate_password_hash, check_password_hash
+
 app = Flask(__name__)
 
 """
-   Register kid (PUT) - 
+   Register kid (POST) parent id - 
                 1.Email
                 2.Password
                 3.Name
-                4.Parent_id
                 
              response - 201
             
 """
 
-@app.route('/register_kid', methods=['PUT'])
+@app.route('/parent/<int:id>/kid', methods=['POST'])
 def register_kid():
     try:
         json_temp = "{}"
@@ -23,22 +25,42 @@ def register_kid():
         response = make_response(temp_response, 201)
         return response
     except:
-        response =  make_response(jsonify({"error": "Not found"}), 404)
+        response = make_response(jsonify({"error": "Not found"}), 404)
         return response
 
 
 """
-   Register task (PUT) - 
+   Register parent (POST)  - 
                 1.Email
                 2.Password
-                3.Kid_id
-                4.Summary
+                3.Name
+
+             response - 201
+
+"""
+
+
+@app.route('/parent', methods=['POST'])
+def register_parent():
+    try:
+        json_temp = "{}"
+        temp_response = json.loads(json_temp)
+        response = make_response(temp_response, 201)
+        return response
+    except:
+        response = make_response(jsonify({"error": "Not found"}), 404)
+        return response
+
+
+"""
+   Register task (POST) 1.Email 2.Password  3.Kid_id- 
+                2.Summary
                 3.Reward
                 
               response - 201
 """
 
-@app.route('/register_task', methods=['PUT'])
+@app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task', methods=['POST'])
 def register_task():
     try:
         json_temp = "{}"
@@ -55,36 +77,15 @@ def register_task():
                 1.Email
                 2.Password
                 
-            response - 200
+            response - 200 is_kid, name
 """
 
-@app.route('/login_kid', methods=['POST'])
+@app.route('/login', methods=['POST'])
 def login_kid():
     try:
         json_temp = "{}"
         temp_response = json.loads(json_temp)
         response = make_response(temp_response, 200)
-        return response
-    except:
-        response = make_response(jsonify({"error": "Not found"}), 404)
-        return response
-
-
-
-"""
-   Login parent (POST)  - 
-                1.Email
-                2.Password
-                
-            response - 200
-"""
-
-@app.route('/login_parent', methods=['POST'])
-def login_parent():
-    try:
-        json_temp = "{}"
-        temp_response = json.loads(json_temp)
-        response = make_response(temp_response, 201)
         return response
     except:
         response = make_response(jsonify({"error": "Not found"}), 404)
@@ -118,15 +119,15 @@ def parent_ID_kids(id):
    Kid tasks (GET) - 
                 1.Email
                 2.Password
-                3.Kid_id
     response -
                 1.Summary
                 2.ID
                 3.Reward
                 4.State
+                5.Kid_balance
 """
 
-@app.route('/kid_tasks', methods=['GET'])
+@app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task', methods=['GET'])
 def kid_tasks():
     try:
         json_temp = "{}"
@@ -146,7 +147,7 @@ def kid_tasks():
                 4.Comment
 """
 
-@app.route('/kid_tasks', methods=['PUT'])
+@app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task', methods=['PUT'])
 def kid_tasks_put():
     try:
         json_temp = "{}"
