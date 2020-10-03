@@ -7,6 +7,7 @@ from flask import Flask, request
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
+from flask import g
 
 app = Flask(__name__)
 auth = HTTPBasicAuth()
@@ -19,6 +20,25 @@ users = {
     "susan": generate_password_hash("bye")
 }
 
+DATABASE = '/Kidromeda.db'
+
+def get_db():
+    db = getattr(g, '_database', None)
+    if db is None:
+        db = g._database = sqlite3.connect(os.getcwd() + DATABASE)
+    return db
+
+def query_db(query, args=(), one=False):
+    cur = get_db().execute(query, args)
+    rv = cur.fetchall()
+    cur.close()
+    return (rv[0] if rv else None) if one else rv
+
+@app.teardown_appcontext
+def close_connection(exception):
+    db = getattr(g, '_database', None)
+    if db is not None:
+        db.close()
 
 @auth.verify_password
 def verify_password(username, password):
@@ -117,6 +137,27 @@ def register_parent():
         response = make_response(jsonify({"error": "Not found"}), 404)
         return response
 
+"""
+   AUTHORIZATION HEADER - EMAIL & PASSWORD
+   Get parent (GET)  -
+             response - 201
+"""
+@app.route('/parent', methods=['GET'])
+@auth.login_required
+def get_parent():
+    try:
+        conn = sqlite3.connect(os.getcwd() + '/Kidromeda.db')
+        c = conn.cursor()
+        parent = query_db('SELECT id, name,  email FROM parent WHERE parent.email = ?',
+                [auth.username()], one=True)
+        id = parent[0]
+        name = parent[1]
+        email = parent[2]
+        response = {'id': id, 'name': name, 'is_parent': True, 'email': email}
+        return make_response(jsonify(response), 200)
+    except:
+        response = make_response(jsonify({"error": "Not found"}), 404)
+        return response
 
 """
    AUTHORIZATION HEADER - EMAIL & PASSWORD
