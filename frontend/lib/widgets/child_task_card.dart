@@ -6,10 +6,12 @@ import './custom_dialog.dart';
 /// The child sees these.
 class ChildTaskCard extends StatelessWidget {
   final Task task;
+  final void Function() onConfirm;
 
   const ChildTaskCard({
     Key key,
     @required this.task,
+    @required this.onConfirm,
   }) : super(key: key);
 
   @override
@@ -49,7 +51,7 @@ class ChildTaskCard extends StatelessWidget {
                       ? buttonWrapper(MiniFlatButton(
                           color: Colors.green.shade100,
                           child: Text("✓ Confirm"),
-                          onPressed: () {},
+                          onPressed: this.onConfirm,
                         ))
                       : buttonWrapper(MiniFlatButton(
                           child: Text("🛈 Details"),
