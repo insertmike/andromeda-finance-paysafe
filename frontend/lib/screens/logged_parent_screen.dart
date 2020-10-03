@@ -4,6 +4,7 @@ import 'package:kidromeda/screens/my_profile_page.dart';
 import '../widgets/add_child_dialog.dart';
 import '../widgets/custom_snackbar.dart';
 import '../utils/string_utils.dart';
+import '../theme.dart';
 
 class LoggedParentScreen extends StatefulWidget {
   static const routeName = '/logged_home';
@@ -103,7 +104,9 @@ class _LoggedHomeScreenState extends State<LoggedParentScreen> {
 _displayAddKidDialog(BuildContext context) async {
   final GlobalKey<FormState> _deleteFormKey = GlobalKey<FormState>();
   String _password;
-  String _newPassword;
+  String _passwordConfirmed;
+  String _name;
+  String _email;
   return showDialog(
       context: context,
       builder: (context) {
@@ -116,25 +119,41 @@ _displayAddKidDialog(BuildContext context) async {
               children: <Widget>[
                 TextFormField(
                   obscureText: true,
-                  validator: isPasswordCompliant,
-                  onChanged: (val) => _password = val,
-                  decoration: InputDecoration(
+                  onChanged: (val) => _name = val,
+                  decoration: customInputDecoration.copyWith(
+                    hintText: "Name",
+                  ),
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                TextFormField(
+                  obscureText: true,
+                  onChanged: (val) => _name = val,
+                  decoration: customInputDecoration.copyWith(
                     hintText: "Email",
                   ),
                 ),
-                TextFormField(
-                  obscureText: true,
-                  validator: isPasswordCompliant,
-                  onChanged: (val) => _password = val,
-                  decoration: InputDecoration(
-                    hintText: "Password",
-                  ),
+                SizedBox(
+                  height: 15,
                 ),
                 TextFormField(
                   obscureText: true,
                   validator: isPasswordCompliant,
-                  onChanged: (val) => _newPassword = val,
-                  decoration: InputDecoration(hintText: "Confirm Password"),
+                  onChanged: (val) => _passwordConfirmed = val,
+                  decoration: customInputDecoration.copyWith(
+                    hintText: "Password",
+                  ),
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                TextFormField(
+                  obscureText: true,
+                  validator: isPasswordCompliant,
+                  onChanged: (val) => _passwordConfirmed = val,
+                  decoration: customInputDecoration.copyWith(
+                      hintText: "Confirm Password"),
                 ),
               ],
             ),
