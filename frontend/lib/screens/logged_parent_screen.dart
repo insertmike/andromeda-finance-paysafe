@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:kidromeda/screens/add_kid_screen.dart';
 import 'package:kidromeda/screens/my_children_page.dart';
 import 'package:kidromeda/screens/my_profile_page.dart';
-import '../widgets/add_child_dialog.dart';
-import '../widgets/custom_snackbar.dart';
-import '../utils/string_utils.dart';
-import '../theme.dart';
 
 class LoggedParentScreen extends StatefulWidget {
   static const routeName = '/logged_home';
@@ -33,7 +30,8 @@ class _LoggedHomeScreenState extends State<LoggedParentScreen> {
     (BuildContext context) {
       return IconButton(
         icon: Icon(Icons.add),
-        onPressed: () => _displayAddKidDialog(context),
+        onPressed: () =>
+            Navigator.of(context).pushNamed(AddKidScreen.routeName),
       );
     },
     (BuildContext context) {
@@ -71,8 +69,9 @@ class _LoggedHomeScreenState extends State<LoggedParentScreen> {
         centerTitle: true,
         elevation: 0.0,
         actions: <Widget>[
-          SizedBox.shrink(),
-          _appBarActions[_selectedIndex](context),
+          Builder(builder: (BuildContext context) {
+            return _appBarActions[_selectedIndex](context);
+          })
         ],
       ),
       body: IndexedStack(
@@ -99,87 +98,4 @@ class _LoggedHomeScreenState extends State<LoggedParentScreen> {
       ),
     );
   }
-}
-
-_displayAddKidDialog(BuildContext context) async {
-  final GlobalKey<FormState> _deleteFormKey = GlobalKey<FormState>();
-  String _password;
-  String _passwordConfirmed;
-  String _name;
-  String _email;
-  return showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Center(child: Text('Add Kid')),
-          content: Form(
-            key: _deleteFormKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                TextFormField(
-                  obscureText: true,
-                  onChanged: (val) => _name = val,
-                  decoration: customInputDecoration.copyWith(
-                    hintText: "Name",
-                  ),
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                TextFormField(
-                  obscureText: true,
-                  onChanged: (val) => _name = val,
-                  decoration: customInputDecoration.copyWith(
-                    hintText: "Email",
-                  ),
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                TextFormField(
-                  obscureText: true,
-                  validator: isPasswordCompliant,
-                  onChanged: (val) => _passwordConfirmed = val,
-                  decoration: customInputDecoration.copyWith(
-                    hintText: "Password",
-                  ),
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                TextFormField(
-                  obscureText: true,
-                  validator: isPasswordCompliant,
-                  onChanged: (val) => _passwordConfirmed = val,
-                  decoration: customInputDecoration.copyWith(
-                      hintText: "Confirm Password"),
-                ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            new FlatButton(
-              child: new Text(
-                'Cancel',
-                style: TextStyle(color: Colors.grey),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            FlatButton(
-              child: new Text(
-                'Add',
-                style: TextStyle(color: Theme.of(context).primaryColor),
-              ),
-              onPressed: () {
-                if (_deleteFormKey.currentState.validate()) {
-                  // send request
-                }
-              },
-            ),
-          ],
-        );
-      });
 }
