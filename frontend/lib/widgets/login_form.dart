@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
+import 'package:kidromeda/screens/logged_parent_screen.dart';
 import './default_btn.dart';
+import 'custom_snackbar.dart';
 
 class LoginForm extends StatefulWidget {
   @override
@@ -85,5 +86,24 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
-  void _submit(BuildContext context) async {}
+  void _submit(BuildContext context) async {
+    if (!_formKey.currentState.validate()) {
+      Scaffold.of(context).showSnackBar(CustomSnackbar.buildErrorSnackBar(
+          context, 'Invalid Authentication Details'));
+      return;
+    }
+
+    FocusScope.of(context).requestFocus(FocusNode());
+    // HARDCODED UNTIL API AVAILABLE
+    if (_email == "admin" && _password == "admin") {
+      Navigator.pushReplacementNamed(
+        context,
+        LoggedParentScreen.routeName,
+      );
+    } else {
+      Scaffold.of(context).showSnackBar(CustomSnackbar.buildErrorSnackBar(
+          context,
+          'Please insert at least one number, one capital letter and one symbol'));
+    }
+  }
 }
