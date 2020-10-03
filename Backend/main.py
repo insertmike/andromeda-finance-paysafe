@@ -1,4 +1,5 @@
 import json
+import os
 
 import flask
 from flask import make_response, jsonify
@@ -10,7 +11,7 @@ import sqlite3
 app = Flask(__name__)
 auth = HTTPBasicAuth()
 
-conn = sqlite3.connect('/Users/dpavlovski/Desktop/paysafe-hackathon-vmv/Backend/Kidromeda.db')
+conn = sqlite3.connect(os.getcwd() + '/Kidromeda.db')
 c = conn.cursor()
 
 users = {
@@ -21,7 +22,7 @@ users = {
 
 @auth.verify_password
 def verify_password(username, password):
-        conn = sqlite3.connect('/Users/dpavlovski/Desktop/paysafe-hackathon-vmv/Backend/Kidromeda.db')
+        conn = sqlite3.connect(os.getcwd() + '/Kidromeda.db')
         c = conn.cursor()
         query = "SELECT PASSWORD FROM Kid WHERE EMAIL = '" + username + "'"
         c.execute(query)
@@ -43,22 +44,22 @@ def verify_password(username, password):
 
 """
    AUTHORIZATION HEADER - EMAIL & PASSWORD
-   Register kid (POST) parent id - 
+   Register kid (POST) parent id -
         request-
-        
+
         {
             "email": "VALUE",
             "password": "VALUE",
             "name": "VALUE"
         }
-   
+
              response - 201
-            
+
 """
 @app.route('/parent/<int:id>/kid', methods=['POST'])
 def register_kid(id):
     try:
-        conn = sqlite3.connect('/Users/dpavlovski/Desktop/paysafe-hackathon-vmv/Backend/Kidromeda.db')
+        conn = sqlite3.connect(os.getcwd() + '/Kidromeda.db')
         c = conn.cursor()
 
         name = request.json.get('name')
@@ -84,7 +85,7 @@ def register_kid(id):
 
 """
    AUTHORIZATION HEADER - EMAIL & PASSWORD
-   Register parent (POST)  - 
+   Register parent (POST)  -
                request -
         {
             "email": "VALUE",
@@ -97,7 +98,7 @@ def register_kid(id):
 @app.route('/parent', methods=['POST'])
 def register_parent():
     try:
-        conn = sqlite3.connect('/Users/dpavlovski/Desktop/paysafe-hackathon-vmv/Backend/Kidromeda.db')
+        conn = sqlite3.connect(os.getcwd() + '/Kidromeda.db')
         c = conn.cursor()
 
         name = request.json.get('name')
@@ -119,20 +120,20 @@ def register_parent():
 
 """
    AUTHORIZATION HEADER - EMAIL & PASSWORD
-   Register task (POST)      
+   Register task (POST)
         request -
                 {
                     "summary": "VALUE",
                     "reward": "VALUE"
                 }
-                
+
               response - 201
 """
 @app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task', methods=['POST'])
 @auth.login_required
 def register_task(kid_id):
     try:
-        conn = sqlite3.connect('/Users/dpavlovski/Desktop/paysafe-hackathon-vmv/Backend/Kidromeda.db')
+        conn = sqlite3.connect(os.getcwd() + '/Kidromeda.db')
         c = conn.cursor()
 
         #add checking for parent permision to change the kid( is this the parent of the kid)
@@ -159,7 +160,7 @@ def register_task(kid_id):
 """
    AUTHORIZATION HEADER - EMAIL & PASSWORD
    Login  (GET)  -
-            
+
 
             response - 200
             {
@@ -167,7 +168,7 @@ def register_task(kid_id):
                 "name": "VALUE"
                 "email":"VALUE",
                 "current_id":"VALUE"
-                
+
             }
 """
 @app.route('/login', methods=['GET'])
@@ -175,7 +176,7 @@ def register_task(kid_id):
 def login():
     email = auth.username()
 
-    conn = sqlite3.connect('/Users/dpavlovski/Desktop/paysafe-hackathon-vmv/Backend/Kidromeda.db')
+    conn = sqlite3.connect(os.getcwd() + '/Kidromeda.db')
     c = conn.cursor()
 
     query = "SELECT NAME, ID FROM Kid WHERE EMAIL = '" + email + "'"
@@ -206,17 +207,17 @@ def login():
 
 """
    AUTHORIZATION HEADER - EMAIL & PASSWORD
-   parent/$ID?kids (GET) - 
+   parent/$ID?kids (GET) -
 
-          response - 
-                    
+          response -
+
 {children: { name, balance, tasks: [{ summary, status, reward, image: string|null, comment: string }] }
 """
 @app.route('/parent/<int:parent_id>/kid', methods=['GET'])
 @auth.login_required
 def parent_id_kids(parent_id):
     try:
-        conn = sqlite3.connect('/Users/dpavlovski/Desktop/paysafe-hackathon-vmv/Backend/Kidromeda.db')
+        conn = sqlite3.connect(os.getcwd() + '/Kidromeda.db')
         c = conn.cursor()
         query = "SELECT ID FROM KID WHERE Parent_id = '" + str(parent_id) + "'"
         c.execute(query)
@@ -242,7 +243,7 @@ def parent_id_kids(parent_id):
 
 """
    AUTHORIZATION HEADER - EMAIL & PASSWORD
-   Kid tasks (PUT) (kid ready method) - 
+   Kid tasks (PUT) (kid ready method) -
             {
                 "image": "VALUE",
                 "comment": "VALUE"
@@ -266,13 +267,13 @@ def kid_tasks_put():
 
 """
    AUTHORIZATION HEADER - EMAIL & PASSWORD
-   Kid tasks (POST) (verify if the task is done) - 
+   Kid tasks (POST) (verify if the task is done) -
             request-
             {
                 "verify": "VALUE",
             }
-            
-            
+
+
       response - 200
 
 """
@@ -289,4 +290,3 @@ def parants_tasks_put():
     except:
         response = make_response(jsonify({"error": "Not found"}), 404)
         return response
-
