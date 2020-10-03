@@ -3,6 +3,7 @@ import 'package:kidromeda/screens/my_children_page.dart';
 import 'package:kidromeda/screens/my_profile_page.dart';
 import '../widgets/add_child_dialog.dart';
 import '../widgets/custom_snackbar.dart';
+import '../utils/string_utils.dart';
 
 class LoggedParentScreen extends StatefulWidget {
   static const routeName = '/logged_home';
@@ -31,14 +32,7 @@ class _LoggedHomeScreenState extends State<LoggedParentScreen> {
     (BuildContext context) {
       return IconButton(
         icon: Icon(Icons.add),
-        onPressed: () => showAddChildDialog(context).then(
-          (val) => {
-            if (val == true)
-              {CustomSnackbar.buildSuccessSnackBar(context, 'Success')}
-            else
-              {CustomSnackbar.buildSuccessSnackBar(context, 'Failed')}
-          },
-        ),
+        onPressed: () => _displayAddKidDialog(context),
       );
     },
     (BuildContext context) {
@@ -104,4 +98,69 @@ class _LoggedHomeScreenState extends State<LoggedParentScreen> {
       ),
     );
   }
+}
+
+_displayAddKidDialog(BuildContext context) async {
+  final GlobalKey<FormState> _deleteFormKey = GlobalKey<FormState>();
+  String _password;
+  String _newPassword;
+  return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Center(child: Text('Add Kid')),
+          content: Form(
+            key: _deleteFormKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                TextFormField(
+                  obscureText: true,
+                  validator: isPasswordCompliant,
+                  onChanged: (val) => _password = val,
+                  decoration: InputDecoration(
+                    hintText: "Email",
+                  ),
+                ),
+                TextFormField(
+                  obscureText: true,
+                  validator: isPasswordCompliant,
+                  onChanged: (val) => _password = val,
+                  decoration: InputDecoration(
+                    hintText: "Password",
+                  ),
+                ),
+                TextFormField(
+                  obscureText: true,
+                  validator: isPasswordCompliant,
+                  onChanged: (val) => _newPassword = val,
+                  decoration: InputDecoration(hintText: "Confirm Password"),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text(
+                'Cancel',
+                style: TextStyle(color: Colors.grey),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: new Text(
+                'Add',
+                style: TextStyle(color: Theme.of(context).primaryColor),
+              ),
+              onPressed: () {
+                if (_deleteFormKey.currentState.validate()) {
+                  // send request
+                }
+              },
+            ),
+          ],
+        );
+      });
 }

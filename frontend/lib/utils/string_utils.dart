@@ -5,22 +5,45 @@ bool isValidEmail(String value) {
   return regex.hasMatch(value);
 }
 
-bool isPasswordCompliant(String password) {
-  int minLength = 8;
-  if (password == null || password.isEmpty) {
-    return false;
+String isPasswordCompliant(String password) {
+  bool hasUppercase = false;
+  bool hasDigits = false;
+  bool hasLowercase = false;
+  bool hasSpecialCharacters = false;
+
+  if (password.isEmpty) {
+    return 'Please insert at least one number, one capital letter and one symbol';
   }
 
-  bool hasUppercase = password.contains(new RegExp(r'[A-Z]'));
-  bool hasDigits = password.contains(new RegExp(r'[0-9]'));
-  bool hasLowercase = password.contains(new RegExp(r'[a-z]'));
-  bool hasSpecialCharacters =
-      password.contains(new RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
-  bool hasMinLength = password.length > minLength;
+  if (password.length < 8) {
+    return 'Password should be at least 8 characters';
+  }
 
-  return hasDigits &
-      hasUppercase &
-      hasLowercase &
-      hasSpecialCharacters &
-      hasMinLength;
+  hasSpecialCharacters =
+      password.contains(new RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+
+  if (!hasSpecialCharacters) {
+    return 'Password requires special character.';
+  }
+
+  password.runes.forEach((int currentCharacter) {
+    var character = new String.fromCharCode(currentCharacter);
+    if (_isdigit(character, 0)) {
+      hasDigits = true;
+    } else if (character == character.toUpperCase()) {
+      hasUppercase = true;
+    } else if (character == character.toLowerCase()) {
+      hasLowercase = true;
+    }
+    if (hasUppercase && hasLowercase && hasDigits) {
+      return null;
+    }
+  });
+
+  return hasSpecialCharacters && hasUppercase && hasLowercase && hasDigits
+      ? null
+      : "Please insert at least one number, one capital letter and one symbol";
 }
+
+bool _isdigit(String s, int idx) =>
+    "0".compareTo(s[idx]) <= 0 && "9".compareTo(s[idx]) >= 0;
