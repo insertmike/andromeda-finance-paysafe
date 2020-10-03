@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kidromeda/widgets/circular_percentage_indicator.dart';
 import 'package:kidromeda/widgets/mini_flat_button.dart';
+import './custom_dialog.dart';
 
 class TaskInfoCard extends StatelessWidget {
   final String summary;
@@ -47,7 +48,14 @@ class TaskInfoCard extends StatelessWidget {
                     ),
               MiniFlatButton(
                 child: Text("🛈 Details"),
-                onPressed: () {},
+                onPressed: () => showDialog(
+                    context: context,
+                    builder: (_) => CustomDialogBox(
+                          img: Image.asset('assets/images/piggy_bank.png'),
+                          title: 'Task Details',
+                          text: 'OK',
+                          descriptions: this.summary,
+                        )),
               ),
             ])
           ],
