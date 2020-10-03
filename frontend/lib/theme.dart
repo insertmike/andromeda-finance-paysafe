@@ -1,6 +1,26 @@
 import 'package:flutter/material.dart';
 import './config.dart';
 
+InputDecoration customInputDecoration = InputDecoration(
+  border: new OutlineInputBorder(
+      borderRadius: const BorderRadius.all(
+    const Radius.circular(0.0),
+  )),
+  focusedBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(0.0),
+    borderSide: BorderSide(
+      color: accentColorConfig,
+    ),
+  ),
+  enabledBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(5.0),
+    borderSide: BorderSide(
+      color: primaryColorConfig,
+      width: 1.5,
+    ),
+  ),
+);
+
 class AppTheme {
   static final _themeBase = ThemeData(
     primaryColor: primaryColorConfig,
