@@ -115,21 +115,21 @@ def register_kid(id):
 @app.route('/parent', methods=['POST'])
 def register_parent():
     try:
-        conn = sqlite3.connect(os.getcwd() + '/Kidromeda.db')
-        c = conn.cursor()
-
         name = request.json.get('name')
         email = request.json.get('email')
         password = request.json.get('password')
 
-        c.execute("INSERT INTO Parent(NAME,Email,PASSWORD) VALUES (?, ?, ?)",
-                  (name, email, generate_password_hash(password)))
-        conn.commit()
-
-        json_temp = "{}"
-        temp_response = json.loads(json_temp)
-        response = make_response(temp_response, 201)
-        return response
+        res = query_db('INSERT INTO Parent(NAME,Email,PASSWORD) VALUES (?, ?, ?)', [name, email, generate_password_hash(password)])
+        # Get Last Entry
+        res = query_db('SELECT * FROM parent ORDER BY id DESC', one = True)
+        id = res[0]
+        name = res[1]
+        email = res[2]
+        
+        response = {'id': id, 'name': name, 'is_parent': True, 'email': email}
+        return make_response(jsonify(response), 201)
+        
+    
     except:
         response = make_response(jsonify({"error": "Not found"}), 404)
         return response
