@@ -14,7 +14,8 @@ class TaskInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final icon = [Icons.hourglass_empty, Icons.warning, Icons.check][this.status];
+    final icon =
+        [Icons.hourglass_empty, Icons.warning, Icons.check][this.status];
 
     return Container(
         padding: EdgeInsets.all(16),
@@ -31,16 +32,19 @@ class TaskInfoCard extends StatelessWidget {
               Icon(icon),
               Text(this.summary),
             ]),
-            // TODO: Only show these for pending tasks (status=1)
             Row(children: [
-              MiniFlatButton(
-                child: Text("✓ Confirm"),
-                onPressed: () {},
-              ),
-              MiniFlatButton(
-                child: Text("X Deny"),
-                onPressed: () {},
-              ),
+              status == 0 || status == 2
+                  ? SizedBox.shrink()
+                  : MiniFlatButton(
+                      child: Text("✓ Confirm"),
+                      onPressed: () {},
+                    ),
+              status == 2
+                  ? SizedBox.shrink()
+                  : MiniFlatButton(
+                      child: Text("X Deny"),
+                      onPressed: () {},
+                    ),
               MiniFlatButton(
                 child: Text("🛈 Details"),
                 onPressed: () {},
