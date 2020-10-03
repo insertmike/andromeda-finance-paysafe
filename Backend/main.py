@@ -21,9 +21,14 @@ users = {
 
 @auth.verify_password
 def verify_password(username, password):
-    if username in users and \
-            check_password_hash(users.get(username), password):
-        return username
+
+        conn = sqlite3.connect('/Users/dpavlovski/Desktop/paysafe-hackathon-vmv/Backend/Kidromeda.db')
+        c = conn.cursor()
+        query = "SELECT PASSWORD FROM Kid WHERE EMAIL = '" + username + "'"
+        c.execute(query)
+        password_db = c.fetchone()[0]
+        if check_password_hash(password_db, password):
+            return username
 
 
 """
@@ -47,6 +52,7 @@ def register_kid(id):
         name = request.json.get('name')
         email = request.json.get('email')
         password = request.json.get('password')
+
         balance = 0
         parent_id = id
 
