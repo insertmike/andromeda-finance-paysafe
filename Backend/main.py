@@ -21,7 +21,6 @@ users = {
 
 @auth.verify_password
 def verify_password(username, password):
-
         conn = sqlite3.connect('/Users/dpavlovski/Desktop/paysafe-hackathon-vmv/Backend/Kidromeda.db')
         c = conn.cursor()
         query = "SELECT PASSWORD FROM Kid WHERE EMAIL = '" + username + "'"
@@ -31,12 +30,18 @@ def verify_password(username, password):
             return username
 
 
+
 """
+   AUTHORIZATION HEADER - EMAIL & PASSWORD
    Register kid (POST) parent id - 
-                1.Email
-                2.Password
-                3.Name
-                
+        request-
+        
+        {
+            "email": "VALUE",
+            "password": "VALUE",
+            "name": "VALUE"
+        }
+   
              response - 201
             
 """
@@ -69,14 +74,18 @@ def register_kid(id):
         return response
 
 
+
 """
+   AUTHORIZATION HEADER - EMAIL & PASSWORD
    Register parent (POST)  - 
-                1.Email
-                2.Password
-                3.Name
+               request -
+        {
+            "email": "VALUE",
+            "password": "VALUE",
+            "name": "VALUE"
+        }
 
              response - 201
-
 """
 
 
@@ -105,9 +114,13 @@ def register_parent():
 
 
 """
-   Register task (POST) 1.Email 2.Password  3.Kid_id- 
-                2.Summary
-                3.Reward
+   AUTHORIZATION HEADER - EMAIL & PASSWORD
+   Register task (POST)      
+        request -
+                {
+                    "summary": "VALUE",
+                    "reward": "VALUE"
+                }
                 
               response - 201
 """
@@ -127,15 +140,19 @@ def register_task():
 
 
 """
-   Login kids (POST)  - 
-                1.Email
-                2.Password
-                
-            response - 200 is_kid, name
+   AUTHORIZATION HEADER - EMAIL & PASSWORD
+   Login  (GET)  -
+            
+
+            response - 200
+            {
+                "is_parent": "VALUE",
+                "name": "VALUE"
+            }
 """
 
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['GET'])
 @auth.login_required
 def login_kid():
     try:
@@ -149,14 +166,12 @@ def login_kid():
 
 
 """
+   AUTHORIZATION HEADER - EMAIL & PASSWORD
    parent/$ID?kids (GET) - 
-                        1.Email
-                        2.Password
+
           response - 
-                    1.Kid_name
-                    2.Kid_balance
-                    3.Kid_task summary
-                    4.kid_task state
+                    
+{children: { name, balance, tasks: [{ summary, status, reward, image: string|null, comment: string }] }
 """
 
 
@@ -173,42 +188,19 @@ def parent_ID_kids(id):
         return response
 
 
-"""
-   Kid tasks (GET) - 
-                1.Email
-                2.Password
-    response -
-                1.Summary
-                2.ID
-                3.Reward
-                4.State
-                5.Kid_balance
-"""
-
-
-@app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task', methods=['GET'])
-@auth.login_required
-def kid_tasks():
-    try:
-        json_temp = "{}"
-        temp_response = json.loads(json_temp)
-        response = make_response(temp_response, 200)
-        return response
-    except:
-        response = make_response(jsonify({"error": "Not found"}), 404)
-        return response
-
 
 """
-   Kid tasks (PUT) - 
-                1.Email
-                2.Password
-                3.Image
-                4.Comment
+   AUTHORIZATION HEADER - EMAIL & PASSWORD
+   Kid tasks (PUT) (kid ready method) - 
+            {
+                "image": "VALUE",
+                "comment": "VALUE"
+            }
+    response - 201
 """
 
 
-@app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task', methods=['PUT'])
+@app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task/<int:task_id>', methods=['PUT'])
 @auth.login_required
 def kid_tasks_put():
     try:
@@ -222,22 +214,22 @@ def kid_tasks_put():
 
 
 """
-   Full tasks (GET) - 
-                1.Email
-                2.Password
-                3.Kid_id
-    response -
-            1.ID
-            2.Summary
-            3.Image
-            4.Comment
-            5.State
+   AUTHORIZATION HEADER - EMAIL & PASSWORD
+   Kid tasks (POST) (verify if the task is done) - 
+            request-
+            {
+                "verify": "VALUE",
+            }
+            
+            
+      response - 200
+
 """
 
 
-@app.route('/full_kid_tasks', methods=['GET'])
+@app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task/<int:task_id>/verify', methods=['POST'])
 @auth.login_required
-def kid_tasks_all():
+def parants_tasks_put():
     try:
         json_temp = "{}"
         temp_response = json.loads(json_temp)
@@ -247,26 +239,3 @@ def kid_tasks_all():
         response = make_response(jsonify({"error": "Not found"}), 404)
         return response
 
-
-"""
-   Full tasks (POST) - 
-                1.Email
-                2.Password
-                3.Kid ID
-                4.Task ID
-    response -
-            200
-"""
-
-
-@app.route('/full_kid_tasks', methods=['POST'])
-@auth.login_required
-def kid_tasks_all_put():
-    try:
-        json_temp = "{}"
-        temp_response = json.loads(json_temp)
-        response = make_response(temp_response, 200)
-        return response
-    except:
-        response = make_response(jsonify({"error": "Not found"}), 404)
-        return response
