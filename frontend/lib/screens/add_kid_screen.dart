@@ -1,9 +1,9 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:kidromeda/widgets/custom_snackbar.dart';
 import '../theme.dart';
 import '../widgets/default_btn.dart';
+import 'dart:async';
+import 'dart:io';
 
 class AddKidScreen extends StatefulWidget {
   static const routeName = '/addKidScreen';
@@ -81,6 +81,9 @@ class _AddKidScreenState extends State<AddKidScreen> {
                       decoration: customInputDecoration.copyWith(
                           hintText: "Confirm Password"),
                     ),
+                    SizedBox(
+                      height: 20,
+                    ),
                     InkWell(
                       child: defaultBtn(context, 'Add'),
                       onTap: () => {
@@ -89,16 +92,12 @@ class _AddKidScreenState extends State<AddKidScreen> {
                             _scaffoldKey.currentState.showSnackBar(
                                 CustomSnackbar.buildSuccessSnackBar(
                                     context, 'Success')),
-                            Navigator.of(context).pop(true)
+                            Future.delayed(Duration(seconds: 2)).then((_) {
+                              // this code is executed after the future ends.
+                              Navigator.of(context).pop(true);
+                            }),
                           }
                       },
-                    ),
-                    FlatButton(
-                      child: new Text(
-                        'Add',
-                        style: TextStyle(color: Theme.of(context).primaryColor),
-                      ),
-                      onPressed: () {},
                     ),
                   ],
                 ),
