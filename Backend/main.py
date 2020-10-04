@@ -319,7 +319,7 @@ def parent_id_kids(parent_id):
 
         response = {"children" :[]}
 
-        response = {"children" :[]}    
+        response = {"children" :[]}
 
         children = query_db("SELECT id, parent_id, name, balance FROM kid WHERE parent_id ='" + str(parent_id) + "'",[])
         # print(children)
@@ -350,30 +350,6 @@ def parent_id_kids(parent_id):
     except:
         response = make_response(jsonify({"error": "Not found1"}), 404)
         return response
-
-
-"""
-   AUTHORIZATION HEADER - EMAIL & PASSWORD
-   Kid tasks (PUT) (kid ready method) -
-            {
-                "image": "VALUE",
-                "comment": "VALUE"
-            }
-    response - 201
-"""
-
-@app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task/<int:task_id>', methods=['PUT'])
-@auth.login_required
-def kid_tasks_put():
-    try:
-        json_temp = "{}"
-        temp_response = json.loads(json_temp)
-        response = make_response(temp_response, 201)
-        return response
-    except:
-        response = make_response(jsonify({"error": "Not found"}), 404)
-        return response
-
 
 """
    AUTHORIZATION HEADER - EMAIL & PASSWORD
