@@ -118,7 +118,6 @@ def register_kid(id):
              response - 201
 """
 
-
 @app.route('/parent', methods=['POST'])
 def register_parent():
     try:
@@ -275,6 +274,7 @@ def parent_id_kids(parent_id):
             curr_kid['balance']=child[3]
             curr_kid['tasks']= []
             tasks = query_db("SELECT id, summary, completed, reward, comment, kid_id FROM task WHERE kid_id ='" + str(child[0]) + "'")
+            print(tasks)
             if not tasks:
                 curr_kid['tasks'].append([])
                 response['children'].append(curr_kid)
@@ -287,7 +287,7 @@ def parent_id_kids(parent_id):
                 curr_task['reward'] = task[3]
                 curr_task['comment'] = task[4]
                 curr_task['kid_id'] = task[5]
-            curr_kid['tasks'].append(curr_task)
+                curr_kid['tasks'].append(curr_task)
             response['children'].append(curr_kid)
         response = make_response(jsonify(response), 200)
         return response
@@ -303,9 +303,8 @@ def parent_id_kids(parent_id):
                 "image": "VALUE",
                 "comment": "VALUE"
             }
-    response - 200
+    response - 201
 """
-
 
 @app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task/<int:task_id>', methods=['PUT'])
 @auth.login_required
@@ -337,7 +336,7 @@ def kid_tasks_put(parent_id, kid_id, task_id):
 """
 
 
-@app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task/<int:task_id>/verify', methods=['POST'])
+@app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task/<int:task_id>/verify', methods=['PUT'])
 @auth.login_required
 def parants_tasks_put(parent_id, kid_id, task_id):
     verify = request.json.get('verify')
@@ -350,5 +349,3 @@ def parants_tasks_put(parent_id, kid_id, task_id):
             response = {'task_id': curr[0], 'summary': curr[1], 'reward': curr[2], 'status': curr[3], 'comment': curr[4]}
 
             return make_response(jsonify(response), 200)
-
-
