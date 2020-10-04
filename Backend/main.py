@@ -335,8 +335,6 @@ def kid_tasks_put():
       response - 200
 
 """
-
-
 @app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task/<int:task_id>/verify', methods=['PUT'])
 @auth.login_required
 def parants_tasks_put(parent_id, kid_id, task_id):
@@ -350,33 +348,3 @@ def parants_tasks_put(parent_id, kid_id, task_id):
             response = {'task_id': curr[0], 'summary': curr[1], 'reward': curr[2], 'status': curr[3], 'comment': curr[4]}
 
             return make_response(jsonify(response), 200)
-
-
-"""
-   AUTHORIZATION HEADER - EMAIL & PASSWORD
-   Kid tasks (PUT) (verify if the task is done) -
-            request-
-            {
-                "verify": "VALUE",
-            }
-
-
-      response - 200
-
-"""
-@app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task/<int:task_id>/verify', methods=['PUT'])
-@auth.login_required
-def parants_tasks_put(parent_id, kid_id, task_id):
-    verify = request.json.get('verify')
-    if verify == 'True':
-        query_db("UPDATE task SET completed='2' WHERE id ='" + str(task_id) + "'")
-
-        curr = query_db("SELECT * FROM Task WHERE id = '" + str(task_id) + "'", one=True)
-
-        if curr is not None:
-            response = {'task_id': curr[0], 'summary': curr[1], 'reward': curr[2], 'status': curr[3], 'comment': curr[4]}
-
-            return make_response(jsonify(response), 200)
-
-
-
