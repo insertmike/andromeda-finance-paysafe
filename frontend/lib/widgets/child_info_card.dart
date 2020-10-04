@@ -28,7 +28,7 @@ class ChildInfoCard extends StatelessWidget {
               Text(this.kid.name,
                   style:
                       TextStyle(fontSize: 24.0, fontWeight: FontWeight.w700)),
-              Text("₩ ${this.kid.balance}",
+              Text("₩ ${this.kid.balance.toStringAsFixed(2)}",
                   style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w300))
             ]),
             Row(

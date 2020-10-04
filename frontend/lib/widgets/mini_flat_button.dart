@@ -22,7 +22,7 @@ class MiniFlatButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
         ),
       ),
-      height: 32,
+      height: 28,
     );
   }
 }

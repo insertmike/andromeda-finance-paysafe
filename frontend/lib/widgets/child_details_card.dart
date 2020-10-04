@@ -36,7 +36,7 @@ class _ChildDetailsCardState extends State<ChildDetailsCard> {
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 2),
-                child: Text("₩ ${this.widget.kid.balance}",
+                child: Text("₩ ${this.widget.kid.balance.toStringAsFixed(2)}",
                     style:
                         TextStyle(fontSize: 24.0, fontWeight: FontWeight.w700)),
               ),

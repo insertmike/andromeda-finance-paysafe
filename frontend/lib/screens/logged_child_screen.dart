@@ -73,10 +73,24 @@ class LoggedChildScreen extends StatelessWidget {
             ),
             elevation: 0,
             backgroundColor: Colors.transparent,
-            child: _buildConfirmDialogContent(context, task)));
+            child: CompleteTaskDialogContent(task: task)));
   }
+}
 
-  Widget _buildConfirmDialogContent(BuildContext context, Task task) {
+class CompleteTaskDialogContent extends StatefulWidget {
+  final Task task;
+
+  CompleteTaskDialogContent({ Key key, @required this.task }) : super(key: key);
+
+  @override
+  _CompleteTaskDialogContentState createState() => _CompleteTaskDialogContentState();
+}
+
+class _CompleteTaskDialogContentState extends State<CompleteTaskDialogContent> {
+  String comment;
+
+  @override
+  Widget build(BuildContext context) {
     return Stack(children: <Widget>[
       Container(
           padding: EdgeInsets.all(16),
@@ -93,11 +107,11 @@ class LoggedChildScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("Complete Task",
-                          style: TextStyle(
-                              fontSize: 22, fontWeight: FontWeight.w700)),
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 16),
-                    child: Text(task.summary,
+                    child: Text(widget.task.summary,
                         style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
@@ -108,20 +122,29 @@ class LoggedChildScreen extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         // FIXME
-                        // TextFormField(
-                        //   obscureText: true,
-                        //   onChanged: (val) => {},
-                        //   decoration: customInputDecoration.copyWith(
-                        //     hintText: "Name",
-                        //   ),
-                        // ),
+                        SizedBox(
+                          width: 240,
+                          child: TextFormField(
+                            obscureText: true,
+                            onChanged: (val) => { comment = val },
+                            decoration: customInputDecoration.copyWith(
+                              hintText: "Comment",
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.bottomRight, // FIXME: Doesn't work?
-                    child: MiniFlatButton(child: Text("Confirm"), onPressed: () {}),
-                  )
+                  Padding(
+                      padding: EdgeInsets.only(top: 16),
+                      child: Align(
+                        alignment:
+                            Alignment.bottomRight, // FIXME: Doesn't work?
+                        child: MiniFlatButton(
+                            child: Text("Confirm"), onPressed: () {
+                              // TODO: Send update tasks status to pending and refresh
+                            }),
+                      ))
                 ],
               )
             ],

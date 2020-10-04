@@ -41,6 +41,12 @@ class ChildTaskCard extends StatelessWidget {
               child: Row(children: [
                 Padding(child: Icon(icon), padding: EdgeInsets.only(right: 8)),
                 Text(task.summary),
+                Expanded(
+                  child: Align(
+                    child: Text("₩ ${task.reward.toStringAsFixed(2)}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w300)),
+                    alignment: Alignment.centerRight,
+                  ),
+                ),
               ]),
             ),
             Row(
