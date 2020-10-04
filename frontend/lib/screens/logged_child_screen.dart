@@ -13,15 +13,21 @@ import 'package:kidromeda/widgets/child_task_card.dart';
 import 'package:kidromeda/widgets/mini_flat_button.dart';
 import 'package:kidromeda/widgets/segregated_task_list.dart';
 
-class LoggedChildScreen extends StatelessWidget {
+class LoggedChildScreen extends StatefulWidget {
   static const routeName = '/logged_child';
-  final Future<Kid> _kidFuture = _getKid();
 
   static Future<Kid> _getKid() async {
     AuthToken token = await AuthenticationUtils.getToken();
     int id = await AuthenticationUtils.getId();
     return await fetchKid(token, id);
   }
+
+  @override
+  _LoggedChildScreenState createState() => _LoggedChildScreenState();
+}
+
+class _LoggedChildScreenState extends State<LoggedChildScreen> {
+  final Future<Kid> _kidFuture = LoggedChildScreen._getKid();
 
   @override
   Widget build(BuildContext context) {
