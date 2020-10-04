@@ -176,39 +176,24 @@ def get_parent():
 @auth.login_required
 def register_task(parent_id, kid_id):
     try:
+
         #add checking for parent permision to change the kid( is this the parent of the kid)
 
         summary = request.json.get('summary')
         reward = request.json.get('reward')
+
         reward = float(reward)
+
         completed = 0
         comment = ""
-
         url = ""
+
         query_db('INSERT INTO TASK(SUMMARY,REWARD,COMPLETED,COMMENT,URL,Kid_id) VALUES (?, ?, ?, ?, ?, ?)',
-                       [summary, reward, completed, comment,url, kid_id])
-        print("!")
+                 [summary, reward, completed, comment, url, kid_id])
 
-        # Get Last Entry
-        res = query_db('SELECT SUMMARY,REWARD,COMPLETED,COMMENT,KID_ID FROM task ORDER BY id DESC', one=True)
-        print(res)
-        for entry in res:
-            print(reward)
-
-
-        print("1")
-        res = query_db('INSERT INTO TASK(SUMMARY,REWARD,COMPLETED,COMMENT,kid_id) VALUES (?, ?, ?, ?, ?)', [summary, reward,completed,comment,kid_id])
-        print(res)
-        print("1")
-        # Get Last Entry
-        res = query_db('SELECT FROM task ORDER BY id DESC', [summary, reward,completed,comment,kid_id], one = True)
-        print(res)
-        print("1")
-
-        json_temp = "{}"
-        temp_response = json.loads(json_temp)
-        response = make_response(temp_response, 201)
-        return response
+        res = query_db('SELECT ID,SUMMARY,REWARD,COMPLETED,COMMENT,KID_ID FROM task ORDER BY id DESC', one=True)
+        response = {'task_id': res[0],'summary': res[1],'reward': res[2], "status": res[3], 'comment': res[4], "kid_id": res[5]}
+        return make_response(jsonify(response), 200)
     except:
         response = make_response(jsonify({"error": "Not found"}), 404)
         return response
