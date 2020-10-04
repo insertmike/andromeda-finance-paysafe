@@ -264,15 +264,33 @@ def login():
 @auth.login_required
 def parent_id_kids(parent_id):
     try:
-
-        children = query_db("SELECT * FROM kid WHERE parent_id ='" + str(parent_id) + "'")
-
+        response = {"children" :[]}
+        children = query_db("SELECT id, parent_id, name, balance FROM kid WHERE parent_id ='" + str(parent_id) + "'",[])
+        # print(children)
         for child in children:
-            curr_task = query_db("SELECT * FROM TASK WHERE kid_id ='" + str(child[0]) + "'")
-            print(curr_task)
-
-
-        return "!"
+            curr_kid = {}
+            curr_kid['id']=child[0]
+            curr_kid['parent_id']=child[1]
+            curr_kid['name']=child[2]
+            curr_kid['balance']=child[3]
+            curr_kid['tasks']= []
+            tasks = query_db("SELECT id, summary, completed, reward, comment, kid_id FROM task WHERE kid_id ='" + str(child[0]) + "'")
+            if not tasks:
+                curr_kid['tasks'].append([])
+                response['children'].append(curr_kid)
+                continue
+            for task in tasks:
+                curr_task = {}
+                curr_task['id'] = task[0]
+                curr_task['summary'] = task[1]
+                curr_task['status'] = task[2]
+                curr_task['reward'] = task[3]
+                curr_task['comment'] = task[4]
+                curr_task['kid_id'] = task[5]
+            curr_kid['tasks'].append(curr_task)
+            response['children'].append(curr_kid)
+        response = make_response(jsonify(response), 200)
+        return response
     except:
         response = make_response(jsonify({"error": "Not found1"}), 404)
         return response
