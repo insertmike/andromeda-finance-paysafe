@@ -191,24 +191,8 @@ def register_task(parent_id, kid_id):
 
         # Get Last Entry
         res = query_db('SELECT SUMMARY,REWARD,COMPLETED,COMMENT,KID_ID FROM task ORDER BY id DESC', one=True)
-        print(res)
-        for entry in res:
-            print(reward)
-
-
-        print("1")
-        res = query_db('INSERT INTO TASK(SUMMARY,REWARD,COMPLETED,COMMENT,kid_id) VALUES (?, ?, ?, ?, ?)', [summary, reward,completed,comment,kid_id])
-        print(res)
-        print("1")
-        # Get Last Entry
-        res = query_db('SELECT FROM task ORDER BY id DESC', [summary, reward,completed,comment,kid_id], one = True)
-        print(res)
-        print("1")
-
-        json_temp = "{}"
-        temp_response = json.loads(json_temp)
-        response = make_response(temp_response, 201)
-        return response
+        response = {'summary': res[0], "reward": res[1], 'status': res[2], "kid_id": res[4]}
+        return make_response(jsonify(response), 200)
     except:
         response = make_response(jsonify({"error": "Not found"}), 404)
         return response
