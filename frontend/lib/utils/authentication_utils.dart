@@ -64,6 +64,6 @@ class AuthenticationUtils {
 
   static void logout(BuildContext context) {
     AuthenticationUtils.nullLoginInfo();
-    Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+    Navigator.pushReplacementNamed(context, '/');
   }
 }
