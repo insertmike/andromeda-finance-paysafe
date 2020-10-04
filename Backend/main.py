@@ -15,7 +15,7 @@ auth = HTTPBasicAuth()
 conn = sqlite3.connect(os.getcwd() + '/Kidromeda.db')
 c = conn.cursor()
 
-DATABASE = '/Kidromeda.db'
+DATABASE = '/Kidromeda2.db'
 
 
 def get_db():
@@ -74,6 +74,35 @@ def verify_password(username, password):
              response - 201
 
 """
+@app.route('/kid/<int:id>', methods=['GET'])
+def get_kid(id):
+    try:
+        kid = {}
+        res = query_db("SELECT id, parent_id, name, balance FROM kid WHERE id ='" + str(id) + "'",[], one=True)
+        kid['id']=res[0]
+        kid['parent_id']=res[1]
+        kid['name']=res[2]
+        kid['balance']=res[3]
+        kid['tasks']= []
+        tasks = query_db("SELECT id, summary, completed, reward, comment, kid_id FROM task WHERE kid_id ='" + str(id) + "'")
+        if len(tasks) ==  0:
+            response = make_response[jsonify(kid), 200]
+            return response
+        print('lol')
+        for task in tasks:
+            curr_task = {}
+            curr_task['id'] = task[0]
+            curr_task['summary'] = task[1]
+            curr_task['status'] = task[2]
+            curr_task['reward'] = task[3]
+            curr_task['comment'] = task[4]
+            curr_task['kid_id'] = task[5]
+            kid['tasks'].append(curr_task)
+        response = make_response(jsonify(kid), 200)
+        return response
+    except:
+        response = make_response(jsonify({"error": "Not found1"}), 404)
+        return response
 
 
 @app.route('/parent/<int:id>/kid', methods=['POST'])
@@ -100,7 +129,8 @@ def register_kid(id):
 
 
         return make_response(jsonify(response), 201)
-    except:
+    except Exception as e:
+        print(e)
         response = make_response(jsonify({"error": "Not found"}), 404)
         return response
 
@@ -276,7 +306,6 @@ def parent_id_kids(parent_id):
             tasks = query_db("SELECT id, summary, completed, reward, comment, kid_id FROM task WHERE kid_id ='" + str(child[0]) + "'")
             print(tasks)
             if not tasks:
-                curr_kid['tasks'].append([])
                 response['children'].append(curr_kid)
                 continue
             for task in tasks:
