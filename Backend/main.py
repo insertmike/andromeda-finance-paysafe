@@ -118,7 +118,6 @@ def register_kid(id):
              response - 201
 """
 
-
 @app.route('/parent', methods=['POST'])
 def register_parent():
     try:
@@ -264,15 +263,33 @@ def login():
 @auth.login_required
 def parent_id_kids(parent_id):
     try:
-
-        children = query_db("SELECT * FROM kid WHERE parent_id ='" + str(parent_id) + "'")
-
+        response = {"children" :[]}    
+        children = query_db("SELECT id, parent_id, name, balance FROM kid WHERE parent_id ='" + str(parent_id) + "'",[])
+        # print(children)
         for child in children:
-            curr_task = query_db("SELECT * FROM TASK WHERE kid_id ='" + str(child[0]) + "'")
-            print(curr_task)
-
-
-        return "!"
+            curr_kid = {}
+            curr_kid['id']=child[0]
+            curr_kid['parent_id']=child[1]
+            curr_kid['name']=child[2]
+            curr_kid['balance']=child[3]
+            curr_kid['tasks']= []
+            tasks = query_db("SELECT id, summary, completed, reward, comment, kid_id FROM task WHERE kid_id ='" + str(child[0]) + "'")
+            if not tasks:
+                curr_kid['tasks'].append([])
+                response['children'].append(curr_kid)
+                continue
+            for task in tasks:
+                curr_task = {}
+                curr_task['id'] = task[0]
+                curr_task['summary'] = task[1]
+                curr_task['status'] = task[2]
+                curr_task['reward'] = task[3]
+                curr_task['comment'] = task[4]
+                curr_task['kid_id'] = task[5]
+            curr_kid['tasks'].append(curr_task)
+            response['children'].append(curr_kid)
+        response = make_response(jsonify(response), 200)
+        return response
     except:
         response = make_response(jsonify({"error": "Not found1"}), 404)
         return response
@@ -285,24 +302,21 @@ def parent_id_kids(parent_id):
                 "image": "VALUE",
                 "comment": "VALUE"
             }
-    response - 200
+    response - 201
 """
 
 
 @app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task/<int:task_id>', methods=['PUT'])
 @auth.login_required
-def kid_tasks_put(parent_id, kid_id, task_id):
-    image = request.json.get('image')
-    comment = request.json.get('comment')
-
-    query_db("UPDATE task SET url ='" + image + "', comment='" + comment + "', completed='1' WHERE id ='" + str(task_id) + "'")
-
-    curr = query_db("SELECT * FROM Task WHERE id = '" + str(task_id) + "'", one=True)
-
-    if curr is not None:
-        response = {'task_id': curr[0], 'summary': curr[1], 'reward': curr[2], 'status': curr[3],'comment':curr[4]}
-
-        return make_response(jsonify(response), 200)
+def kid_tasks_put():
+    try:
+        json_temp = "{}"
+        temp_response = json.loads(json_temp)
+        response = make_response(temp_response, 201)
+        return response
+    except:
+        response = make_response(jsonify({"error": "Not found"}), 404)
+        return response
 
 
 """
@@ -321,16 +335,13 @@ def kid_tasks_put(parent_id, kid_id, task_id):
 
 @app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task/<int:task_id>/verify', methods=['POST'])
 @auth.login_required
-def parants_tasks_put(parent_id, kid_id, task_id):
-    verify = request.json.get('verify')
-    if verify == 'True':
-        query_db("UPDATE task SET completed='2' WHERE id ='" + str(task_id) + "'")
-
-        curr = query_db("SELECT * FROM Task WHERE id = '" + str(task_id) + "'", one=True)
-
-        if curr is not None:
-            response = {'task_id': curr[0], 'summary': curr[1], 'reward': curr[2], 'status': curr[3], 'comment': curr[4]}
-
-            return make_response(jsonify(response), 200)
-
+def parants_tasks_put():
+    try:
+        json_temp = "{}"
+        temp_response = json.loads(json_temp)
+        response = make_response(temp_response, 200)
+        return response
+    except:
+        response = make_response(jsonify({"error": "Not found"}), 404)
+        return response
 
