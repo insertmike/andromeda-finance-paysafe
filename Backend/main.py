@@ -118,17 +118,20 @@ def register_parent():
         name = request.json.get('name')
         email = request.json.get('email')
         password = request.json.get('password')
-
+        print(name)
         query_db('INSERT INTO Parent(NAME,Email,PASSWORD) VALUES (?, ?, ?)',
                        [name, email, generate_password_hash(password)])
 
         # Get Last Entry
         res = query_db('SELECT * FROM parent ORDER BY id DESC', one=True)
-        id = res[0]
+
+        parent_id = res[0]
+        print(parent_id)
         name = res[1]
+        print(name)
         email = res[2]
 
-        response = {'id': id, 'name': name, 'is_parent': True, 'email': email}
+        response = {'id': parent_id, 'name': name, 'is_parent': True, 'email': email}
         return make_response(jsonify(response), 201)
 
 
@@ -255,26 +258,17 @@ def login():
 @auth.login_required
 def parent_id_kids(parent_id):
     try:
-        conn = sqlite3.connect(os.getcwd() + '/Kidromeda.db')
-        c = conn.cursor()
-        query = "SELECT ID FROM KID WHERE Parent_id = '" + str(parent_id) + "'"
-        c.execute(query)
-        keep = c.fetchone()
-        print(keep)
 
-        if keep is not None:
-            for entry in keep:
-                query = "SELECT * FROM TASK WHERE Kid_id = '" + str(entry) + "'"
-                c.execute(query)
-                keep1 = c.fetchone()
-                print(keep1)
+        children = query_db("SELECT * FROM kid WHERE parent_id ='" + str(parent_id) + "'")
 
-        json_temp = "{}"
-        temp_response = json.loads(json_temp)
-        response = make_response(temp_response, 200)
-        return response
+        for child in children:
+            curr_task = query_db("SELECT * FROM TASK WHERE kid_id ='" + str(child[0]) + "'")
+            print(curr_task)
+
+
+        return "!"
     except:
-        response = make_response(jsonify({"error": "Not found"}), 404)
+        response = make_response(jsonify({"error": "Not found1"}), 404)
         return response
 
 
