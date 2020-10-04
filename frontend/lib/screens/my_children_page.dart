@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kidromeda/models/auth_token.dart';
 import 'package:kidromeda/models/kid.dart';
 import 'package:kidromeda/services/task_service.dart';
 import 'package:kidromeda/utils/authentication_utils.dart';
@@ -13,8 +14,10 @@ class _MyChildrenPageState extends State<MyChildrenPage> {
   final Future<List<Kid>> _kidsFuture = _getKids();
 
   static Future<List<Kid>> _getKids() async {
-    return fetchKidsAsync(await AuthenticationUtils.getToken(),
-        await AuthenticationUtils.getId());
+    AuthToken token = await AuthenticationUtils.getToken();
+    int id = await AuthenticationUtils.getId();
+    print(id);
+    return await fetchKidsAsync(token, id);
   }
 
   @override
@@ -22,26 +25,27 @@ class _MyChildrenPageState extends State<MyChildrenPage> {
     return FutureBuilder<List<Kid>>(
         future: _kidsFuture,
         builder: (BuildContext context, AsyncSnapshot<List<Kid>> snapshot) {
+          print(snapshot.data);
           if (snapshot.hasData) {
             final children = snapshot.data;
             return Container(
                 child: ListView.builder(
-                itemCount: children.length,
-                itemBuilder: (context, position) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.all(8),
-                        child: ChildInfoCard(
-                          kid: children[position],
-                        ),
-                      )
-                    ],
-                  );
-                },
-              ));
+              itemCount: children.length,
+              itemBuilder: (context, position) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.all(8),
+                      child: ChildInfoCard(
+                        kid: children[position],
+                      ),
+                    )
+                  ],
+                );
+              },
+            ));
           } else {
             return Center(
               child: Column(
@@ -55,7 +59,9 @@ class _MyChildrenPageState extends State<MyChildrenPage> {
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 16),
-                    child: Text(snapshot.hasError ? snapshot.error.toString() : 'Loading...'),
+                    child: Text(snapshot.hasError
+                        ? snapshot.error.toString()
+                        : 'Loading...'),
                   )
                 ],
               ),

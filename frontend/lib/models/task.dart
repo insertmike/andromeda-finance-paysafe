@@ -18,7 +18,7 @@ class Task {
       id: json["id"],
       kidId: json["child_id"],
       summary: json["summary"],
-      status: json["status"],
+      status: int.parse(json["status"]),
       reward: json["reward"],
       comment: json["comment"]);
 }
