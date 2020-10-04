@@ -26,7 +26,7 @@ Future<User> login(AuthToken token) async {
   if (response.statusCode == 200) {
     final data = jsonDecode(response.body);
     return User(
-        id: data['id'],
+        id: data['current_id'],
         email: data['email'],
         name: data['name'],
         isParent: data['is_parent']);
