@@ -84,9 +84,11 @@ def register_kid(id):
         password = request.json.get('password')
         balance = 0
         parent_id = id
-        res = query_db('INSERT INTO KID(NAME,Email,PASSWORD,BALANCE,Parent_id) VALUES (?, ?, ?, ?, ?)', [name, email, generate_password_hash(password),balance,parent_id])
+        res = query_db('INSERT INTO kid(name,email,password,balance,parent_id) VALUES (?, ?, ?, ?, ?)', [name, email, generate_password_hash(password),balance,parent_id])
+        print(res)
         # Get Last Entry
         res = query_db('SELECT * FROM kid ORDER BY id DESC', one = True)
+        print(res) 
         id = res[0]
         name = res[1]
         email = res[2]
@@ -167,26 +169,20 @@ def get_parent():
 @app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task', methods=['POST'])
 @auth.login_required
 def register_task(parent_id, kid_id):
-    try:
+    try:        
         #add checking for parent permision to change the kid( is this the parent of the kid)
         summary = request.json.get('summary')
         reward = request.json.get('reward')
         completed = 0
         comment = ""
-        print("1")
-        res = query_db('INSERT INTO TASK(SUMMARY,REWARD,COMPLETED,COMMENT,kid_id) VALUES (?, ?, ?, ?, ?)', [summary, reward,completed,comment,kid_id])
-        print(res)
-        print("1")
-        # Get Last Entry
-        res = query_db('SELECT FROM task ORDER BY id DESC', [summary, reward,completed,comment,kid_id], one = True)
-        print(res)
-        print("1")
-        json_temp = "{}"
-        temp_response = json.loads(json_temp)
-        response = make_response(temp_response, 201)
-        return response
-    except e:
-        print(e)
+        url = ""
+                  
+        res = query_db('INSERT INTO TASK(SUMMARY,REWARD,COMPLETED,COMMENT,URL,Kid_id) VALUES (?, ?, ?, ?, ?, ?)', [summary, reward,completed,comment,url,kid_id]) 
+        res = query_db('SELECT * FROM task ORDER BY id DESC', one = True)
+        response = {'id': res[0], 'summary': res[1],'reward': res[2], 'status':res[3], "parent_id":res[6] }
+       
+        return make_response(jsonify(response), 201)
+    except:
         response = make_response(jsonify({"error": "Not found"}), 404)
         return response
 
