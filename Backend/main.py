@@ -175,23 +175,24 @@ def get_parent():
 @app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task', methods=['POST'])
 @auth.login_required
 def register_task(parent_id, kid_id):
-    try:        
+    try:
+
         #add checking for parent permision to change the kid( is this the parent of the kid)
 
         summary = request.json.get('summary')
         reward = request.json.get('reward')
+
         reward = float(reward)
+
         completed = 0
         comment = ""
-
         url = ""
-        query_db('INSERT INTO TASK(SUMMARY,REWARD,COMPLETED,COMMENT,URL,Kid_id) VALUES (?, ?, ?, ?, ?, ?)',
-                       [summary, reward, completed, comment,url, kid_id])
-        print("!")
 
-        # Get Last Entry
-        res = query_db('SELECT SUMMARY,REWARD,COMPLETED,COMMENT,KID_ID FROM task ORDER BY id DESC', one=True)
-        response = {'summary': res[0], "reward": res[1], 'status': res[2], "kid_id": res[4]}
+        query_db('INSERT INTO TASK(SUMMARY,REWARD,COMPLETED,COMMENT,URL,Kid_id) VALUES (?, ?, ?, ?, ?, ?)',
+                 [summary, reward, completed, comment, url, kid_id])
+
+        res = query_db('SELECT ID,SUMMARY,REWARD,COMPLETED,COMMENT,KID_ID FROM task ORDER BY id DESC', one=True)
+        response = {'task_id': res[0],'summary': res[1],'reward': res[2], "status": res[3], 'comment': res[4], "kid_id": res[5]}
         return make_response(jsonify(response), 200)
     except:
         response = make_response(jsonify({"error": "Not found"}), 404)
@@ -326,3 +327,4 @@ def parants_tasks_put():
     except:
         response = make_response(jsonify({"error": "Not found"}), 404)
         return response
+
