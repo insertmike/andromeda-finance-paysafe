@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kidromeda/models/task.dart';
+import 'package:kidromeda/screens/logged_parent_screen.dart';
+import 'package:kidromeda/services/task_service.dart';
+import 'package:kidromeda/utils/authentication_utils.dart';
 import 'package:kidromeda/widgets/circular_percentage_indicator.dart';
 import 'package:kidromeda/widgets/mini_flat_button.dart';
 import './custom_dialog.dart';
@@ -56,14 +59,22 @@ class TaskInfoCard extends StatelessWidget {
                       : buttonWrapper(MiniFlatButton(
                           color: Colors.green.shade100,
                           child: Text("✓ Confirm"),
-                          onPressed: () {},
+                          onPressed: () async {
+                              final token = await AuthenticationUtils.getToken();
+                              final parentId = await AuthenticationUtils.getId();
+                              await confirmTaskAsync(token, parentId, task.kidId ?? 0, task.id);
+
+                              Navigator.pushReplacementNamed(context, LoggedParentScreen.routeName);
+                          },
                         )),
                   task.status == 2
                       ? SizedBox.shrink()
                       : buttonWrapper(MiniFlatButton(
                           color: Colors.red.shade100,
                           child: Text("X Deny"),
-                          onPressed: () {},
+                          onPressed: () {
+
+                          },
                         )),
                   buttonWrapper(MiniFlatButton(
                     child: Text("🛈 Details"),

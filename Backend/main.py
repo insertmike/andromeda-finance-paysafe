@@ -15,7 +15,7 @@ auth = HTTPBasicAuth()
 conn = sqlite3.connect(os.getcwd() + '/Kidromeda.db')
 c = conn.cursor()
 
-DATABASE = '/Kidromeda2.db'
+DATABASE = '/KidromedaNew.db'
 
 
 def get_db():
@@ -373,6 +373,7 @@ def parants_tasks_put(parent_id, kid_id, task_id):
         curr = query_db("SELECT * FROM Task WHERE id = '" + str(task_id) + "'", one=True)
 
         if curr is not None:
+            query_db("UPDATE Kid SET balance = balance + ? WHERE id = ?", [curr[2], kid_id])
             response = {'task_id': curr[0], 'summary': curr[1], 'reward': curr[2], 'status': curr[3], 'comment': curr[4]}
 
             return make_response(jsonify(response), 200)

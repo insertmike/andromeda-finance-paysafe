@@ -94,7 +94,7 @@ Future<void> confirmTaskAsync(
         "Content-Type": "application/json",
       },
       body: jsonEncode({
-        'verified': 'True',
+        'verify': 'True',
       }));
 
   if (response.statusCode != 200) {
