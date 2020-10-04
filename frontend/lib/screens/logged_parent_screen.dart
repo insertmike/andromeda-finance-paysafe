@@ -3,6 +3,7 @@ import 'package:kidromeda/screens/add_kid_screen.dart';
 import 'package:kidromeda/screens/my_children_page.dart';
 import 'package:kidromeda/screens/my_profile_page.dart';
 import '../utils/string_utils.dart';
+import '../utils/authentication_utils.dart';
 
 class LoggedParentScreen extends StatefulWidget {
   static const routeName = '/logged_home';
@@ -38,10 +39,7 @@ class _LoggedHomeScreenState extends State<LoggedParentScreen> {
     (BuildContext context) {
       return IconButton(
           icon: Icon(Icons.exit_to_app),
-          onPressed: () => Navigator.pushReplacementNamed(
-                context,
-                '/',
-              ));
+          onPressed: () => AuthenticationUtils.logout(context));
     },
   ];
 
