@@ -293,7 +293,11 @@ def login():
 @auth.login_required
 def parent_id_kids(parent_id):
     try:
+
+        response = {"children" :[]}
+
         response = {"children" :[]}    
+
         children = query_db("SELECT id, parent_id, name, balance FROM kid WHERE parent_id ='" + str(parent_id) + "'",[])
         # print(children)
         for child in children:
@@ -335,7 +339,6 @@ def parent_id_kids(parent_id):
     response - 201
 """
 
-
 @app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task/<int:task_id>', methods=['PUT'])
 @auth.login_required
 def kid_tasks_put():
@@ -351,7 +354,7 @@ def kid_tasks_put():
 
 """
    AUTHORIZATION HEADER - EMAIL & PASSWORD
-   Kid tasks (POST) (verify if the task is done) -
+   Kid tasks (PUT) (verify if the task is done) -
             request-
             {
                 "verify": "VALUE",
@@ -361,17 +364,16 @@ def kid_tasks_put():
       response - 200
 
 """
-
-
-@app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task/<int:task_id>/verify', methods=['POST'])
+@app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task/<int:task_id>/verify', methods=['PUT'])
 @auth.login_required
-def parants_tasks_put():
-    try:
-        json_temp = "{}"
-        temp_response = json.loads(json_temp)
-        response = make_response(temp_response, 200)
-        return response
-    except:
-        response = make_response(jsonify({"error": "Not found"}), 404)
-        return response
+def parants_tasks_put(parent_id, kid_id, task_id):
+    verify = request.json.get('verify')
+    if verify == 'True':
+        query_db("UPDATE task SET completed='2' WHERE id ='" + str(task_id) + "'")
 
+        curr = query_db("SELECT * FROM Task WHERE id = '" + str(task_id) + "'", one=True)
+
+        if curr is not None:
+            response = {'task_id': curr[0], 'summary': curr[1], 'reward': curr[2], 'status': curr[3], 'comment': curr[4]}
+
+            return make_response(jsonify(response), 200)

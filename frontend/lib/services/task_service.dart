@@ -6,6 +6,22 @@ import 'package:kidromeda/models/kid.dart';
 import '../config.dart';
 import 'package:http/http.dart' as http;
 
+Future<Kid> fetchKid(AuthToken token, int kidId) async {
+  // FIXME: Needs improvement
+  final response = await http.get("$API_SERVER_ADDRESS/kid/$kidId", headers: {
+    "Accept": "application/json",
+    "Authorization": token.toString(),
+  });
+
+  if (response.statusCode == 200) {
+    final data = jsonDecode(response.body);
+    return Kid.fromJson(data);
+  } else {
+    // If that call was not successful, throw an error.
+    throw Exception('Failed to load data');
+  }
+}
+
 Future<List<Kid>> fetchKidsAsync(AuthToken token, int parentId) async {
   // FIXME: Needs improvement
   final response =
