@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kidromeda/models/auth_token.dart';
 import 'package:kidromeda/screens/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -27,10 +28,21 @@ class AuthenticationUtils {
     return email.isNotEmpty;
   }
 
-  AuthenticationUtils.map(dynamic obj) {
-    this._email = obj['email'];
-    this._password = obj['password'];
+  AuthenticationUtils.map(String email, String password) {
+    this._email = email;
+    this._password = password;
     print(_email);
+  }
+
+  static Future<AuthToken> getToken() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final email = prefs.getString('email');
+    final password = prefs.getString('password');
+    if (email == null || password == null) {
+      return null;
+    }
+    return AuthToken.basic(
+        prefs.getString('email'), prefs.getString('password'));
   }
 
   // -- DEVELOPMENT ---

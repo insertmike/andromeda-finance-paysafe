@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kidromeda/models/auth_token.dart';
 import 'package:kidromeda/screens/logged_child_screen.dart';
 import 'package:kidromeda/screens/logged_parent_screen.dart';
 import 'package:kidromeda/services/auth_services.dart';
@@ -64,15 +65,12 @@ class _LoginFormState extends State<LoginForm> {
           context, 'Invalid Authentication Details'));
       return;
     }
-    HttpResponse response = await login(
-      email: _email,
-      password: _password,
-    );
-    FocusScope.of(context).requestFocus(FocusNode());
-    print(response.statusCode);
-    if (response.statusCode == 200) {
-      AuthenticationUtils auth =
-          AuthenticationUtils.map(json.decode(response.message));
+
+    final token = AuthToken.basic(_email, _password);
+    try {
+      final _ = await login(token);
+      FocusScope.of(context).requestFocus(FocusNode());
+      final auth = AuthenticationUtils.map(_email, _password);
 
       Scaffold.of(context).showSnackBar(
           CustomSnackbar.buildSuccessSnackBar(context, 'Success'));
@@ -80,7 +78,8 @@ class _LoginFormState extends State<LoginForm> {
       auth.saveSession();
 
       Navigator.pushReplacementNamed(context, LoggedChildScreen.routeName);
-    } else {
+    } on Exception catch(e) {
+      print(e);
       Scaffold.of(context).showSnackBar(CustomSnackbar.buildErrorSnackBar(
           context,
           'Please insert at least one number, one capital letter and one symbol'));
