@@ -92,7 +92,7 @@ def register_kid(id):
         email = res[2]
         balance = res[4]
         parent_id = res[5]
-        response = {'id': id, 'name': name, 'is_parent': True, 'email': email, 'balance': balance, 'parent_id':parent_id}
+        response = {'id': id, 'name': name, 'is_parent': False, 'email': email, 'balance': balance, 'parent_id':parent_id}
         return make_response(jsonify(response), 201)
     except:
         response = make_response(jsonify({"error": "Not found"}), 404)
@@ -166,29 +166,27 @@ def get_parent():
 """
 @app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task', methods=['POST'])
 @auth.login_required
-def register_task(kid_id):
+def register_task(parent_id, kid_id):
     try:
-        conn = sqlite3.connect(os.getcwd() + '/Kidromeda.db')
-        c = conn.cursor()
-
         #add checking for parent permision to change the kid( is this the parent of the kid)
-
         summary = request.json.get('summary')
         reward = request.json.get('reward')
         completed = 0
         comment = ""
-        print('woo')
-        res = query_db('INSERT INTO TASK(SUMMARY,REWARD,COMPLETED,COMMENT,Kid_id) VALUES (?, ?, ?, ?, ?, ?)', [summary, reward,completed,comment,kid_id])
+        print("1")
+        res = query_db('INSERT INTO TASK(SUMMARY,REWARD,COMPLETED,COMMENT,kid_id) VALUES (?, ?, ?, ?, ?)', [summary, reward,completed,comment,kid_id])
+        print(res)
+        print("1")
         # Get Last Entry
         res = query_db('SELECT FROM task ORDER BY id DESC', [summary, reward,completed,comment,kid_id], one = True)
         print(res)
-        print('woo')
-        print(res)
+        print("1")
         json_temp = "{}"
         temp_response = json.loads(json_temp)
         response = make_response(temp_response, 201)
         return response
-    except:
+    except e:
+        print(e)
         response = make_response(jsonify({"error": "Not found"}), 404)
         return response
 
