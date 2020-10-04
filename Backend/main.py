@@ -285,21 +285,28 @@ def parent_id_kids(parent_id):
                 "image": "VALUE",
                 "comment": "VALUE"
             }
-    response - 201
+    response - 200
 """
 
 
 @app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task/<int:task_id>', methods=['PUT'])
 @auth.login_required
-def kid_tasks_put():
-    try:
-        json_temp = "{}"
-        temp_response = json.loads(json_temp)
-        response = make_response(temp_response, 201)
-        return response
-    except:
-        response = make_response(jsonify({"error": "Not found"}), 404)
-        return response
+def kid_tasks_put(parent_id, kid_id, task_id):
+    image = request.json.get('image')
+    comment = request.json.get('comment')
+    query = "UPDATE TASK SET url = '" + str(image) + "' " + "WHERE id = '" + str(task_id) + "'"
+    query_db(query)
+
+    query = "UPDATE TASK SET comment = '" + str(comment) + "' " + "WHERE id ='" + str(task_id) + "'"
+    query_db(query)
+
+    curr = query_db("SELECT * FROM Task WHERE id = '" + str(task_id) + "'", one=True)
+    print(curr)
+
+    if curr is not None:
+        response = {'task_id': curr[0], 'summary': curr[1], 'reward': curr[2], 'status': 1,'comment':curr[4]}
+
+        return make_response(jsonify(response), 200)
 
 
 """
@@ -318,13 +325,6 @@ def kid_tasks_put():
 
 @app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task/<int:task_id>/verify', methods=['POST'])
 @auth.login_required
-def parants_tasks_put():
-    try:
-        json_temp = "{}"
-        temp_response = json.loads(json_temp)
-        response = make_response(temp_response, 200)
-        return response
-    except:
-        response = make_response(jsonify({"error": "Not found"}), 404)
-        return response
+def parants_tasks_put(parent_id, kid_id, task_id):
+    return "!"
 
