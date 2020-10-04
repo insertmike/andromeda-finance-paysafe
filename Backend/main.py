@@ -274,6 +274,7 @@ def parent_id_kids(parent_id):
             curr_kid['balance']=child[3]
             curr_kid['tasks']= []
             tasks = query_db("SELECT id, summary, completed, reward, comment, kid_id FROM task WHERE kid_id ='" + str(child[0]) + "'")
+            print(tasks)
             if not tasks:
                 curr_kid['tasks'].append([])
                 response['children'].append(curr_kid)
@@ -286,7 +287,7 @@ def parent_id_kids(parent_id):
                 curr_task['reward'] = task[3]
                 curr_task['comment'] = task[4]
                 curr_task['kid_id'] = task[5]
-            curr_kid['tasks'].append(curr_task)
+                curr_kid['tasks'].append(curr_task)
             response['children'].append(curr_kid)
         response = make_response(jsonify(response), 200)
         return response
