@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:kidromeda/screens/logged_child_screen.dart';
 import 'package:kidromeda/screens/logged_parent_screen.dart';
+import 'package:kidromeda/services/auth_services.dart';
+import 'package:kidromeda/utils/authentication_utils.dart';
 import './default_btn.dart';
-import 'custom_snackbar.dart';
+import '../widgets/custom_snackbar.dart';
 import '../theme.dart';
+import '../utils/http_response.dart';
+import 'dart:convert';
 
 class LoginForm extends StatefulWidget {
   @override
@@ -60,19 +64,22 @@ class _LoginFormState extends State<LoginForm> {
           context, 'Invalid Authentication Details'));
       return;
     }
-
+    HttpResponse response = await login(
+      email: _email,
+      password: _password,
+    );
     FocusScope.of(context).requestFocus(FocusNode());
-    // HARDCODED UNTIL API AVAILABLE
-    if (_email == "admin" && _password == "admin") {
-      Navigator.pushReplacementNamed(
-        context,
-        LoggedParentScreen.routeName,
-      );
-    } else if (_email == "child" && _password == "child") {
-      Navigator.pushReplacementNamed(
-        context,
-        LoggedChildScreen.routeName
-      );
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      AuthenticationUtils auth =
+          AuthenticationUtils.map(json.decode(response.message));
+
+      Scaffold.of(context).showSnackBar(
+          CustomSnackbar.buildSuccessSnackBar(context, 'Success'));
+
+      auth.saveSession();
+
+      Navigator.pushReplacementNamed(context, LoggedChildScreen.routeName);
     } else {
       Scaffold.of(context).showSnackBar(CustomSnackbar.buildErrorSnackBar(
           context,
