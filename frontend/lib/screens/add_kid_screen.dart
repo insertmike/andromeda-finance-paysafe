@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:kidromeda/services/task_service.dart';
+import 'package:kidromeda/utils/authentication_utils.dart';
 import 'package:kidromeda/widgets/custom_snackbar.dart';
 import '../theme.dart';
 import '../widgets/default_btn.dart';
@@ -44,7 +46,7 @@ class _AddKidScreenState extends State<AddKidScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     TextFormField(
-                      obscureText: true,
+                      obscureText: false,
                       onChanged: (val) => _name = val,
                       decoration: customInputDecoration.copyWith(
                         hintText: "Name",
@@ -54,8 +56,8 @@ class _AddKidScreenState extends State<AddKidScreen> {
                       height: 15,
                     ),
                     TextFormField(
-                      obscureText: true,
-                      onChanged: (val) => _name = val,
+                      obscureText: false,
+                      onChanged: (val) => _email = val,
                       decoration: customInputDecoration.copyWith(
                         hintText: "Email",
                       ),
@@ -66,7 +68,7 @@ class _AddKidScreenState extends State<AddKidScreen> {
                     TextFormField(
                       obscureText: true,
                       //validator: isPasswordCompliant,
-                      onChanged: (val) => _passwordConfirmed = val,
+                      onChanged: (val) => _password = val,
                       decoration: customInputDecoration.copyWith(
                         hintText: "Password",
                       ),
@@ -92,9 +94,13 @@ class _AddKidScreenState extends State<AddKidScreen> {
                             _scaffoldKey.currentState.showSnackBar(
                                 CustomSnackbar.buildSuccessSnackBar(
                                     context, 'Success')),
-                            Future.delayed(Duration(seconds: 2)).then((_) {
+                            Future.delayed(Duration(seconds: 2)).then((_) async {
                               // this code is executed after the future ends.
                               Navigator.of(context).pop(true);
+
+                              final token = await AuthenticationUtils.getToken();
+                              final parentId = await AuthenticationUtils.getId();
+                              await addKidAsync(token, parentId, name: _name, email: _email, password: _password);
                             }),
                           }
                       },

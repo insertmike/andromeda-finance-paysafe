@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:kidromeda/models/auth_token.dart';
 import 'package:kidromeda/models/kid.dart';
@@ -11,13 +13,34 @@ class MyChildrenPage extends StatefulWidget {
 }
 
 class _MyChildrenPageState extends State<MyChildrenPage> {
-  final Future<List<Kid>> _kidsFuture = _getKids();
+  Future<List<Kid>> _kidsFuture = _getKids();
+  Timer _timer;
 
   static Future<List<Kid>> _getKids() async {
     AuthToken token = await AuthenticationUtils.getToken();
     int id = await AuthenticationUtils.getId();
     print(id);
     return await fetchKidsAsync(token, id);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(new Duration(seconds: 1), (timer) {
+      refreshData();
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  void refreshData() {
+    setState(() {
+      _kidsFuture = _getKids();
+    });
   }
 
   @override

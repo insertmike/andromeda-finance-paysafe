@@ -67,8 +67,8 @@ class _ChildDetailsCardState extends State<ChildDetailsCard> {
           CircularPercentageIndicator(
             size: 96,
             strokeWidth: 8,
-            value: getCompletedTasks(widget.kid.tasks) /
-                this.widget.kid.tasks.length,
+            value: (getCompletedTasks(widget.kid.tasks) /
+                this.widget.kid.tasks.length).clamp(0, 1).toDouble(),
           ),
         ],
       ),

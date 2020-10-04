@@ -37,6 +37,7 @@ class _ChildTasksPageState extends State<ChildTasksPage> {
                     padding: EdgeInsets.only(bottom: 8),
                     child: ChildDetailsCard(
                       kid: widget.kid,
+                      canAddTasks: true,
                     ),
                   ),
                   SegregatedTaskList(

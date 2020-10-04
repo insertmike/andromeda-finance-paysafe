@@ -35,8 +35,8 @@ class ChildInfoCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   CircularPercentageIndicator(
-                      value: getCompletedTasksNumber(this.kid.tasks) /
-                          this.kid.tasks.length,
+                      value: (getCompletedTasksNumber(this.kid.tasks) /
+                          this.kid.tasks.length).clamp(0, 1).toDouble(),
                       size: 48),
                   Column(children: <Widget>[
                     Padding(
