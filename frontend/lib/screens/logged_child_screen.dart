@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:ui';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:kidromeda/models/auth_token.dart';
@@ -12,6 +14,15 @@ import 'package:kidromeda/widgets/child_details_card.dart';
 import 'package:kidromeda/widgets/child_task_card.dart';
 import 'package:kidromeda/widgets/mini_flat_button.dart';
 import 'package:kidromeda/widgets/segregated_task_list.dart';
+import '../services/task_service.dart';
+import 'dart:convert';
+import '../widgets/custom_snackbar.dart';
+import 'package:flutter/widgets.dart';
+import 'package:kidromeda/models/auth_token.dart';
+import 'package:kidromeda/models/kid.dart';
+
+import '../config.dart';
+import 'package:http/http.dart' as http;
 
 class LoggedChildScreen extends StatefulWidget {
   static const routeName = '/logged_child';
@@ -27,11 +38,34 @@ class LoggedChildScreen extends StatefulWidget {
 }
 
 class _LoggedChildScreenState extends State<LoggedChildScreen> {
-  final Future<Kid> _kidFuture = LoggedChildScreen._getKid();
+  Future<Kid> _kidFuture = LoggedChildScreen._getKid();
+  var _scaffoldKey = new GlobalKey<ScaffoldState>();
+  Timer _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(new Duration(seconds: 2), (timer) {
+      refreshData();
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  void refreshData() {
+    setState(() {
+      this._kidFuture = LoggedChildScreen._getKid();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text("My Tasks"),
         centerTitle: true,
@@ -76,8 +110,8 @@ class _LoggedChildScreenState extends State<LoggedChildScreen> {
                             tasks: snapshot.data.tasks,
                             builder: (context, task) => ChildTaskCard(
                               task: task,
-                              onConfirm: () =>
-                                  _showConfirmDialog(context, task),
+                              onConfirm: () => _showConfirmDialog(
+                                  context, task, _scaffoldKey),
                             ),
                           )
                         ],
@@ -107,7 +141,8 @@ class _LoggedChildScreenState extends State<LoggedChildScreen> {
     );
   }
 
-  void _showConfirmDialog(BuildContext context, Task task) {
+  void _showConfirmDialog(
+      BuildContext context, Task task, GlobalKey<ScaffoldState> scaffoldKey) {
     showDialog(
         context: context,
         builder: (_) => Dialog(
@@ -116,14 +151,19 @@ class _LoggedChildScreenState extends State<LoggedChildScreen> {
             ),
             elevation: 0,
             backgroundColor: Colors.transparent,
-            child: CompleteTaskDialogContent(task: task)));
+            child: CompleteTaskDialogContent(
+              task: task,
+              scaffoldKey: scaffoldKey,
+            )));
   }
 }
 
 class CompleteTaskDialogContent extends StatefulWidget {
   final Task task;
-
-  CompleteTaskDialogContent({Key key, @required this.task}) : super(key: key);
+  GlobalKey<ScaffoldState> scaffoldKey;
+  CompleteTaskDialogContent(
+      {Key key, @required this.task, @required this.scaffoldKey})
+      : super(key: key);
 
   @override
   _CompleteTaskDialogContentState createState() =>
@@ -165,11 +205,9 @@ class _CompleteTaskDialogContentState extends State<CompleteTaskDialogContent> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        // FIXME
                         SizedBox(
                           width: 240,
                           child: TextFormField(
-                            obscureText: true,
                             onChanged: (val) => {comment = val},
                             decoration: customInputDecoration.copyWith(
                               hintText: "Comment",
@@ -182,12 +220,33 @@ class _CompleteTaskDialogContentState extends State<CompleteTaskDialogContent> {
                   Padding(
                       padding: EdgeInsets.only(top: 16),
                       child: Align(
-                        alignment:
-                            Alignment.bottomRight, // FIXME: Doesn't work?
+                        alignment: Alignment.bottomRight,
                         child: MiniFlatButton(
                             child: Text("Confirm"),
-                            onPressed: () {
-                              // TODO: Send update tasks status to pending and refresh
+                            onPressed: () async {
+                              AuthToken token =
+                                  await AuthenticationUtils.getToken();
+                              final msg = jsonEncode({
+                                "image": "oldPassword",
+                                "comment": "newPassword"
+                              });
+
+                              final response = await http.put(
+                                "$API_SERVER_ADDRESS/parent/0/kid/0/task/${widget.task.id}",
+                                headers: {
+                                  "Content-Type": "application/json",
+                                  "Authorization": token.toString(),
+                                },
+                                body: msg,
+                              );
+                              print(response.statusCode);
+                              if (response.statusCode == 200) {
+                                Navigator.of(context).pop();
+                                widget.scaffoldKey.currentState.showSnackBar(
+                                    CustomSnackbar.buildSuccessSnackBar(
+                                        context, 'Submitted'));
+                                setState(() {});
+                              }
                             }),
                       ))
                 ],
