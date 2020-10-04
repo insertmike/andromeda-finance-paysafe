@@ -24,7 +24,30 @@ def get_db():
         db = g._database = sqlite3.connect(os.getcwd() + DATABASE)
     return db
 
+"""
+   AUTHORIZATION HEADER - EMAIL & PASSWORD
+   Kid tasks (PUT) (kid ready method) -
+            {
+                "image": "VALUE",
+                "comment": "VALUE"
+            }
+    response - 201
+"""
 
+@app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task/<int:task_id>', methods=['PUT'])
+@auth.login_required
+def kid_tasks_put(parent_id, kid_id, task_id):
+    image = request.json.get('image')
+    comment = request.json.get('comment')
+
+    query_db("UPDATE task SET url ='" + image + "', comment='" + comment + "', completed='1' WHERE id ='" + str(task_id) + "'")
+
+    curr = query_db("SELECT * FROM Task WHERE id = '" + str(task_id) + "'", one=True)
+
+    if curr is not None:
+        response = {'task_id': curr[0], 'summary': curr[1], 'reward': curr[2], 'status': curr[3],'comment':curr[4]}
+
+        return make_response(jsonify(response), 200)
 
 
 def query_db(query, args=(), one=False):
