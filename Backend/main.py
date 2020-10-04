@@ -15,12 +15,8 @@ auth = HTTPBasicAuth()
 conn = sqlite3.connect(os.getcwd() + '/Kidromeda.db')
 c = conn.cursor()
 
-users = {
-    "john": generate_password_hash("hello"),
-    "susan": generate_password_hash("bye")
-}
-
 DATABASE = '/Kidromeda.db'
+
 
 def get_db():
     db = getattr(g, '_database', None)
@@ -28,11 +24,13 @@ def get_db():
         db = g._database = sqlite3.connect(os.getcwd() + DATABASE)
     return db
 
+
 def query_db(query, args=(), one=False):
     cur = get_db().execute(query, args)
     rv = cur.fetchall()
     cur.close()
     return (rv[0] if rv else None) if one else rv
+
 
 @app.teardown_appcontext
 def close_connection(exception):
@@ -40,26 +38,20 @@ def close_connection(exception):
     if db is not None:
         db.close()
 
+
 @auth.verify_password
 def verify_password(username, password):
-        conn = sqlite3.connect(os.getcwd() + '/Kidromeda.db')
-        c = conn.cursor()
-        query = "SELECT PASSWORD FROM Kid WHERE EMAIL = '" + username + "'"
-        c.execute(query)
-        keep = c.fetchone()
-        if keep is not None:
-            password_db = keep[0]
-            if check_password_hash(password_db, password):
-                return username
+    keep = query_db("SELECT PASSWORD FROM Kid WHERE EMAIL = '" + username + "'", one=True)
+    if keep is not None:
+        password_db = keep[0]
+        if check_password_hash(password_db, password):
+            return username
 
-        query = "SELECT PASSWORD FROM Parent WHERE EMAIL = '" + username + "'"
-        c.execute(query)
-        keep = c.fetchone()
-        if keep is not None:
-            password_db = keep[0]
-            if check_password_hash(password_db, password):
-                return username
-
+    keep = query_db("SELECT PASSWORD FROM Parent WHERE EMAIL = '" + username + "'", one=True)
+    if keep is not None:
+        password_db = keep[0]
+        if check_password_hash(password_db, password):
+            return username
 
 
 """
@@ -76,6 +68,8 @@ def verify_password(username, password):
              response - 201
 
 """
+
+
 @app.route('/parent/<int:id>/kid', methods=['POST'])
 def register_kid(id):
     try:
@@ -84,22 +78,24 @@ def register_kid(id):
         password = request.json.get('password')
         balance = 0
         parent_id = id
-        res = query_db('INSERT INTO kid(name,email,password,balance,parent_id) VALUES (?, ?, ?, ?, ?)', [name, email, generate_password_hash(password),balance,parent_id])
-        print(res)
+        query_db('INSERT INTO KID(NAME,Email,PASSWORD,BALANCE,Parent_id) VALUES (?, ?, ?, ?, ?)',
+                       [name, email, generate_password_hash(password), balance, parent_id])
         # Get Last Entry
-        res = query_db('SELECT * FROM kid ORDER BY id DESC', one = True)
-        print(res) 
+        res = query_db('SELECT * FROM kid ORDER BY id DESC', one=True)
         id = res[0]
         name = res[1]
         email = res[2]
         balance = res[4]
         parent_id = res[5]
-        response = {'id': id, 'name': name, 'is_parent': False, 'email': email, 'balance': balance, 'parent_id':parent_id}
+
+        response = {'id': id, 'name': name, 'is_parent': True, 'email': email, 'balance': balance,
+                    'parent_id': parent_id}
+
+
         return make_response(jsonify(response), 201)
     except:
         response = make_response(jsonify({"error": "Not found"}), 404)
         return response
-
 
 
 """
@@ -114,6 +110,8 @@ def register_kid(id):
 
              response - 201
 """
+
+
 @app.route('/parent', methods=['POST'])
 def register_parent():
     try:
@@ -121,26 +119,31 @@ def register_parent():
         email = request.json.get('email')
         password = request.json.get('password')
 
-        res = query_db('INSERT INTO Parent(NAME,Email,PASSWORD) VALUES (?, ?, ?)', [name, email, generate_password_hash(password)])
+        query_db('INSERT INTO Parent(NAME,Email,PASSWORD) VALUES (?, ?, ?)',
+                       [name, email, generate_password_hash(password)])
+
         # Get Last Entry
-        res = query_db('SELECT * FROM parent ORDER BY id DESC', one = True)
+        res = query_db('SELECT * FROM parent ORDER BY id DESC', one=True)
         id = res[0]
         name = res[1]
         email = res[2]
-        
+
         response = {'id': id, 'name': name, 'is_parent': True, 'email': email}
         return make_response(jsonify(response), 201)
-        
-    
+
+
     except:
         response = make_response(jsonify({"error": "Not found"}), 404)
         return response
+
 
 """
    AUTHORIZATION HEADER - EMAIL & PASSWORD
    Get parent (GET)  -
              response - 201
 """
+
+
 @app.route('/parent', methods=['GET'])
 @auth.login_required
 def get_parent():
@@ -155,6 +158,7 @@ def get_parent():
         response = make_response(jsonify({"error": "Not found"}), 404)
         return response
 
+
 """
    AUTHORIZATION HEADER - EMAIL & PASSWORD
    Register task (POST)
@@ -166,22 +170,45 @@ def get_parent():
 
               response - 201
 """
+
+
 @app.route('/parent/<int:parent_id>/kid/<int:kid_id>/task', methods=['POST'])
 @auth.login_required
 def register_task(parent_id, kid_id):
     try:        
         #add checking for parent permision to change the kid( is this the parent of the kid)
+
         summary = request.json.get('summary')
         reward = request.json.get('reward')
+        reward = float(reward)
         completed = 0
         comment = ""
+
         url = ""
-                  
-        res = query_db('INSERT INTO TASK(SUMMARY,REWARD,COMPLETED,COMMENT,URL,Kid_id) VALUES (?, ?, ?, ?, ?, ?)', [summary, reward,completed,comment,url,kid_id]) 
-        res = query_db('SELECT * FROM task ORDER BY id DESC', one = True)
-        response = {'id': res[0], 'summary': res[1],'reward': res[2], 'status':res[3], "parent_id":res[6] }
-       
-        return make_response(jsonify(response), 201)
+        query_db('INSERT INTO TASK(SUMMARY,REWARD,COMPLETED,COMMENT,URL,Kid_id) VALUES (?, ?, ?, ?, ?, ?)',
+                       [summary, reward, completed, comment,url, kid_id])
+        print("!")
+
+        # Get Last Entry
+        res = query_db('SELECT SUMMARY,REWARD,COMPLETED,COMMENT,KID_ID FROM task ORDER BY id DESC', one=True)
+        print(res)
+        for entry in res:
+            print(reward)
+
+
+        print("1")
+        res = query_db('INSERT INTO TASK(SUMMARY,REWARD,COMPLETED,COMMENT,kid_id) VALUES (?, ?, ?, ?, ?)', [summary, reward,completed,comment,kid_id])
+        print(res)
+        print("1")
+        # Get Last Entry
+        res = query_db('SELECT FROM task ORDER BY id DESC', [summary, reward,completed,comment,kid_id], one = True)
+        print(res)
+        print("1")
+
+        json_temp = "{}"
+        temp_response = json.loads(json_temp)
+        response = make_response(temp_response, 201)
+        return response
     except:
         response = make_response(jsonify({"error": "Not found"}), 404)
         return response
@@ -201,38 +228,32 @@ def register_task(parent_id, kid_id):
 
             }
 """
+
+
 @app.route('/login', methods=['GET'])
 @auth.login_required
 def login():
     email = auth.username()
 
-    conn = sqlite3.connect(os.getcwd() + '/Kidromeda.db')
-    c = conn.cursor()
-
-    query = "SELECT NAME, ID FROM Kid WHERE EMAIL = '" + email + "'"
-    c.execute(query)
-    keep = c.fetchone()
+    keep = query_db("SELECT NAME, ID FROM Kid WHERE EMAIL = '" + email + "'", one=True)
     if keep is not None:
         name = keep[0]
         id = keep[1]
 
-        response = {'name': name, 'is_parent': False, 'email': email, 'current_id':id}
+        response = {'name': name, 'is_parent': False, 'email': email, 'current_id': id}
 
         return make_response(jsonify(response), 200)
 
-    query = "SELECT NAME, ID FROM Parent WHERE EMAIL = '" + email + "'"
-    c.execute(query)
-    keep = c.fetchone()
+    keep = query_db("SELECT NAME, ID FROM Parent WHERE EMAIL = '" + email + "'", one=True)
     if keep is not None:
         name = keep[0]
         id = keep[1]
-        response = {'name': name, 'is_parent': True,'email': email, 'current_id':id}
+        response = {'name': name, 'is_parent': True, 'email': email, 'current_id': id}
 
         return make_response(jsonify(response), 200)
 
     response = make_response(jsonify({"error": "Not found"}), 404)
     return response
-
 
 
 """
@@ -243,6 +264,8 @@ def login():
 
 {children: { name, balance, tasks: [{ summary, status, reward, image: string|null, comment: string }] }
 """
+
+
 @app.route('/parent/<int:parent_id>/kid', methods=['GET'])
 @auth.login_required
 def parent_id_kids(parent_id):
@@ -268,7 +291,6 @@ def parent_id_kids(parent_id):
     except:
         response = make_response(jsonify({"error": "Not found"}), 404)
         return response
-
 
 
 """
