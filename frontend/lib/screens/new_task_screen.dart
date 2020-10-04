@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kidromeda/models/task.dart';
+import 'package:kidromeda/screens/logged_parent_screen.dart';
 import 'package:kidromeda/services/task_service.dart';
 import 'package:kidromeda/utils/authentication_utils.dart';
 import 'package:kidromeda/widgets/custom_snackbar.dart';
@@ -74,9 +75,9 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
                             _scaffoldKey.currentState.showSnackBar(
                                 CustomSnackbar.buildSuccessSnackBar(
                                     context, 'Success')),
-                            Future.delayed(Duration(seconds: 2)).then((_) async {
+                            Future.delayed(Duration(seconds: 1)).then((_) async {
                               // this code is executed after the future ends.
-                              Navigator.of(context).pop(true);
+                              Navigator.pushReplacementNamed(context, LoggedParentScreen.routeName);
 
                               final token = await AuthenticationUtils.getToken();
                               final parentId = await AuthenticationUtils.getId();

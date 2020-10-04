@@ -94,7 +94,7 @@ class _AddKidScreenState extends State<AddKidScreen> {
                             _scaffoldKey.currentState.showSnackBar(
                                 CustomSnackbar.buildSuccessSnackBar(
                                     context, 'Success')),
-                            Future.delayed(Duration(seconds: 2)).then((_) async {
+                            Future.delayed(Duration(seconds: 1)).then((_) async {
                               // this code is executed after the future ends.
                               Navigator.of(context).pop(true);
 
