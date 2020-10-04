@@ -7,13 +7,13 @@ InputDecoration customInputDecoration = InputDecoration(
     const Radius.circular(0.0),
   )),
   focusedBorder: OutlineInputBorder(
-    borderRadius: BorderRadius.circular(0.0),
+    borderRadius: BorderRadius.circular(8.0),
     borderSide: BorderSide(
       color: accentColorConfig,
     ),
   ),
   enabledBorder: OutlineInputBorder(
-    borderRadius: BorderRadius.circular(5.0),
+    borderRadius: BorderRadius.circular(8.0),
     borderSide: BorderSide(
       color: primaryColorConfig,
       width: 1.5,
