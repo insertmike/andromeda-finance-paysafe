@@ -6,17 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthenticationUtils {
   String _email;
   String _password;
-
-  // -- DEVELOPMENT SAVING FOR BASIC AUTH ---
-  static void saveEmail(String email) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('email', email);
-  }
-
-  static void savePassword(String password) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('password', password);
-  }
+  int _id;
 
   // -- DEVELOPMENT --
   static Future<bool> isLogged() async {
@@ -28,9 +18,10 @@ class AuthenticationUtils {
     return email.isNotEmpty;
   }
 
-  AuthenticationUtils.map(String email, String password) {
+  AuthenticationUtils.map(int id, String email, String password) {
     this._email = email;
     this._password = password;
+    this._id = id;
     print(_email);
   }
 
@@ -52,20 +43,27 @@ class AuthenticationUtils {
     return prefs.getString('email') ?? null;
   }
 
+  static Future<int> getId() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('id') ?? null;
+  }
+
   void saveSession() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('email', _email);
     prefs.setString('password', _password);
+    prefs.setInt('id', _id);
   }
 
   static Future<void> nullLoginInfo() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('email', null);
     prefs.setString('password', null);
+    prefs.setInt('id', null);
   }
 
   static void logout(BuildContext context) {
     AuthenticationUtils.nullLoginInfo();
-    Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+    Navigator.pushReplacementNamed(context, '/');
   }
 }

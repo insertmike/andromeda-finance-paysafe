@@ -68,17 +68,21 @@ class _LoginFormState extends State<LoginForm> {
 
     final token = AuthToken.basic(_email, _password);
     try {
-      final _ = await login(token);
+      final user = await login(token);
       FocusScope.of(context).requestFocus(FocusNode());
-      final auth = AuthenticationUtils.map(_email, _password);
+      final auth = AuthenticationUtils.map(user.id, _email, _password);
 
       Scaffold.of(context).showSnackBar(
           CustomSnackbar.buildSuccessSnackBar(context, 'Success'));
 
       auth.saveSession();
 
-      Navigator.pushReplacementNamed(context, LoggedChildScreen.routeName);
-    } on Exception catch(e) {
+      if (user.isParent) {
+        Navigator.pushReplacementNamed(context, LoggedParentScreen.routeName);
+      } else {
+        Navigator.pushReplacementNamed(context, LoggedChildScreen.routeName);
+      }
+    } on Exception catch (e) {
       print(e);
       Scaffold.of(context).showSnackBar(CustomSnackbar.buildErrorSnackBar(
           context,
