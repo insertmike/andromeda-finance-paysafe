@@ -53,7 +53,7 @@ flutter run
           
 </div>
 
-### Kid Screens
+### Child Screens
 
 <div align="center">
 
