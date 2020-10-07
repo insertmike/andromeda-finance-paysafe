@@ -39,10 +39,6 @@ flutter run
 
 <img src="https://user-images.githubusercontent.com/45242072/95380361-90cc4480-08de-11eb-90fc-975a1ed9ac94.png" height="590px"  alt="drawing" style="display: block; margin-left: auto; margin-right: auto;"   />
 
-</div>
-      
-<div align="center">
-
 <img src="https://user-images.githubusercontent.com/45242072/95380365-91fd7180-08de-11eb-9e6e-13b72d9fbe65.png" height="600px"  alt="drawing" style="display: block; margin-left: auto; margin-right: auto;"   />
           
 </div>
@@ -53,10 +49,6 @@ flutter run
 
 <img src="https://user-images.githubusercontent.com/45242072/95380369-92960800-08de-11eb-8f14-2b757edbcee4.png"  height="600px" alt="drawing" style="display: block; margin-left: auto; margin-right: auto;"  />
           
-</div>
-
-<div align="center">
-
 <img src="https://user-images.githubusercontent.com/45242072/95380383-9590f880-08de-11eb-8bb4-6baa0ab46337.png" height="600px" alt="drawing" style="display: block; margin-left: auto; margin-right: auto;"  />
           
 </div>
@@ -67,12 +59,7 @@ flutter run
 
 <img src="https://user-images.githubusercontent.com/45242072/95380376-93c73500-08de-11eb-8e8a-5920b5de2e55.png" alt="drawing" height="600px" style="display: block; margin-left: auto; margin-right: auto;"  />
           
-</div>
-
-<div align="center">
 
 <img src="https://user-images.githubusercontent.com/45242072/95380379-945fcb80-08de-11eb-9fc5-3728f9ca1c63.png" height="600px" alt="drawing" style="display: block; margin-left: auto; margin-right: auto;"  />
           
 </div>
-
-
